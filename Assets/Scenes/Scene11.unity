@@ -1314,12 +1314,12 @@ MonoBehaviour:
   chooseSceneBy: 1
   sceneNumber: 0
   sceneNumberParameterID: -1
-  sceneName: Scene10A
+  sceneName: Scene10
   sceneNameParameterID: -1
   assignScreenOverlay: 0
   onlyPreload: 0
-  relativePosition: 0
-  relativeMarker: {fileID: 0}
+  relativePosition: 1
+  relativeMarker: {fileID: 1866127410145447129}
   relativeMarkerID: 0
   relativeMarkerParameterID: -1
   forceReload: 0
@@ -3044,7 +3044,7 @@ MonoBehaviour:
   interactionSource: 0
   _limitToCamera: {fileID: 0}
   interactiveBoundary: {fileID: 0}
-  hotspotName: Volver al Laberinto
+  hotspotName: Salir del Laberinto
   lineID: -1
   highlight: {fileID: 0}
   walkToMarker: {fileID: 1866127410145447129}
@@ -3157,7 +3157,7 @@ GameObject:
   - component: {fileID: 6832008372843032058}
   - component: {fileID: 6832008372833569434}
   m_Layer: 0
-  m_Name: ElLaberintoHotspot
+  m_Name: SalirDelLaberintoHotspot
   m_TagString: Untagged
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0

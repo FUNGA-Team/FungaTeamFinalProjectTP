@@ -408,10 +408,10 @@ MonoBehaviour:
   isBreakPoint: 0
   nodeRect:
     serializedVersion: 2
-    x: 0
-    y: 0
+    x: 14
+    y: 14
     width: 300
-    height: 60
+    height: 232
   overrideColor: {r: 1, g: 1, b: 1, a: 1}
   showOutputSockets: 1
   parentActionListInEditor: {fileID: 4072449635717945546}
@@ -692,7 +692,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 587368365}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 14.99, y: 0.4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -958,7 +958,7 @@ Transform:
   m_GameObject: {fileID: 805313523}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -0, z: 0}
-  m_LocalScale: {x: 2.4692252, y: 2.4692252, z: 2.4692252}
+  m_LocalScale: {x: 1.405, y: 1.405, z: 1.405}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1310244144}
@@ -1005,7 +1005,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: d80fc7a7b2bf54e13a286fa2e054de91, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f4a0c181f935648f0986f3f064300d2e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1260,7 +1260,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1494389271}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 14.65, y: 0.46, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1296,22 +1296,22 @@ MonoBehaviour:
   isBreakPoint: 0
   nodeRect:
     serializedVersion: 2
-    x: 0
-    y: 0
+    x: 42
+    y: 306
     width: 300
-    height: 60
+    height: 164
   overrideColor: {r: 1, g: 1, b: 1, a: 1}
   showOutputSockets: 1
   parentActionListInEditor: {fileID: 4072449635717945546}
-  chooseSceneBy: 0
-  sceneNumber: 1
+  chooseSceneBy: 1
+  sceneNumber: 8
   sceneNumberParameterID: -1
-  sceneName: 
+  sceneName: Scene08
   sceneNameParameterID: -1
   assignScreenOverlay: 0
   onlyPreload: 0
-  relativePosition: 0
-  relativeMarker: {fileID: 0}
+  relativePosition: 1
+  relativeMarker: {fileID: 4169459433216666755}
   relativeMarkerID: 0
   relativeMarkerParameterID: -1
   forceReload: 0
@@ -1448,7 +1448,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 47.9, y: -190.7}
+  m_AnchoredPosition: {x: 430.3, y: -209.7}
   m_SizeDelta: {x: 37.5, y: 32.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1816016102
@@ -1471,7 +1471,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Sendero De Dalias
+  m_text: Sendero objeto 2 Kall
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1884,14 +1884,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2354441757163304111}
-  m_LocalRotation: {x: -0, y: -0, z: -0.9239167, w: 0.38259372}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: -6.34, y: -2.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1494389272}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -135.011}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!114 &2354441757174579535
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1991,7 +1991,7 @@ GameObject:
   - component: {fileID: 4072449635707842826}
   - component: {fileID: 4072449635717945546}
   m_Layer: 0
-  m_Name: 'Ir al Sendero De Dalias: Use'
+  m_Name: 'Ir al Sendero Objetos de Kall 2: Use'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2049,7 +2049,7 @@ GameObject:
   - component: {fileID: 4169459433239831363}
   - component: {fileID: 4169459433216666755}
   m_Layer: 2
-  m_Name: 'Marker2D: SenderoDeDaliasHotspot'
+  m_Name: 'Marker2D: SenderoDeKall2Hotspot'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2062,14 +2062,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4169459433227393379}
-  m_LocalRotation: {x: -0, y: -0, z: 0.6923184, w: 0.7215922}
-  m_LocalPosition: {x: -6.67, y: -2.54, z: 0}
+  m_LocalRotation: {x: 0, y: -0, z: 0.7071068, w: -0.7071068}
+  m_LocalPosition: {x: -6.7, y: -3.53, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 587368366}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 87.628}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 270}
 --- !u!212 &4169459433239831363
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2416,7 +2416,7 @@ MonoBehaviour:
   interactionSource: 0
   _limitToCamera: {fileID: 0}
   interactiveBoundary: {fileID: 0}
-  hotspotName: Ir al Sendero De Dalias
+  hotspotName: Ir a Sendero objeto 2 Kall
   lineID: -1
   highlight: {fileID: 0}
   walkToMarker: {fileID: 4169459433216666755}
@@ -2529,7 +2529,7 @@ GameObject:
   - component: {fileID: 6832008372843032058}
   - component: {fileID: 6832008372833569434}
   m_Layer: 0
-  m_Name: SenderoDeDaliasHotspot
+  m_Name: SenderoObjetosKall2Hotspot
   m_TagString: Untagged
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -2543,7 +2543,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6832008372839071610}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.09, y: -2.38, z: 0}
+  m_LocalPosition: {x: 8.18, y: -3.21, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2746,25 +2746,25 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -2.1042995, y: -0.27631402}
-      - {x: -0.30563688, y: -0.5648624}
-      - {x: 0.08611852, y: -1.4682508}
-      - {x: 3.334794, y: -2.938366}
-      - {x: 2.5025463, y: -3.67684}
-      - {x: -0.10588503, y: -3.6505895}
-      - {x: -1.9858035, y: -2.104955}
-      - {x: -7.780615, y: -2.0114985}
-      - {x: -7.1350636, y: -2.834399}
-      - {x: -0.56094956, y: -4.869938}
-      - {x: 8.808497, y: -4.8992486}
-      - {x: 8.765632, y: -3.690449}
-      - {x: 6.7431383, y: -2.7528706}
-      - {x: 3.7475061, y: -1.9340241}
-      - {x: 1.6077178, y: -0.7759065}
-      - {x: 6.2016907, y: -0.40338844}
-      - {x: 6.173975, y: -0.19777226}
+    - - {x: -0.5456195, y: -0.29465145}
+      - {x: -0.41566128, y: -0.34481344}
+      - {x: -1.3075252, y: -0.44135553}
+      - {x: -1.7630066, y: -0.6461896}
+      - {x: -2.2468438, y: -0.88955337}
+      - {x: -2.4714112, y: -1.0100019}
+      - {x: -3.3977842, y: -1.5731701}
+      - {x: -4.204819, y: -1.7180998}
+      - {x: -2.6607351, y: -2.174252}
+      - {x: -0.17586395, y: -2.4493997}
+      - {x: 9.046884, y: -4.1290774}
+      - {x: 9.004019, y: -3.5987618}
+      - {x: 8.961966, y: -2.0927236}
+      - {x: 9.0004425, y: -0.7638047}
+      - {x: 7.2373037, y: -0.6475446}
+      - {x: 6.34839, y: -0.5134129}
+      - {x: 5.1654177, y: -0.30779672}
       - {x: 0.4290774, y: -0.351951}
-      - {x: -1.341592, y: 0.06861895}
+      - {x: 0.18041325, y: -0.33480412}
 --- !u!1 &8510112640665909117
 GameObject:
   m_ObjectHideFlags: 0
