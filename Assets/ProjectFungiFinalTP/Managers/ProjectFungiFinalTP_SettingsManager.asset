@@ -41,16 +41,16 @@ MonoBehaviour:
   players: []
   movementMethod: 0
   inputMethod: 0
-  interactionMethod: 0
+  interactionMethod: 2
   selectInteractions: 0
   autoHideInteractionIcons: 1
   cancelInteractions: 0
-  seeInteractions: 0
+  seeInteractions: 1
   closeInteractionMenuIfTapHotspot: 1
   stopPlayerOnClickHotspot: 0
   cycleInventoryCursors: 1
   scaleCursorSpeedWithScreen: 1
-  autoCycleWhenInteract: 0
+  autoCycleWhenInteract: 1
   showHoverInteractionInHotspotLabel: 0
   allowDefaultinteractions: 0
   alwaysCloseInteractionMenus: 1
@@ -60,7 +60,7 @@ MonoBehaviour:
   disableFreeAimWhenDragging: 0
   disableFreeAimWhenDraggingPickUp: 0
   runConversationsWithKeys: 0
-  clickUpInteractions: 0
+  clickUpInteractions: 1
   defaultMouseClicks: 1
   allowGameplayDuringConversations: 0
   walkToHotspotMarkers: 1
@@ -146,7 +146,7 @@ MonoBehaviour:
   closeInteractionMenusIfPlayerLeavesVicinity: 0
   placeDistantHotspotsOnSeparateLayer: 1
   hotspotsInVicinity: 0
-  hotspotIconDisplay: 0
+  hotspotIconDisplay: 1
   hotspotIcon: 0
   hotspotIconTexture: {fileID: 0}
   hotspotIconGraphic:

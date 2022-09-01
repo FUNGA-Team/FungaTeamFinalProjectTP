@@ -2028,7 +2028,7 @@ MonoBehaviour:
   interactionSource: 0
   _limitToCamera: {fileID: 0}
   interactiveBoundary: {fileID: 0}
-  hotspotName: 
+  hotspotName: Ir al laberinto
   lineID: -1
   highlight: {fileID: 0}
   walkToMarker: {fileID: 5084771532241988880}
