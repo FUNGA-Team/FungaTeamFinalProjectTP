@@ -237,9 +237,9 @@ MonoBehaviour:
   enabledOnStart: 0
   actionListOnTurnOn: {fileID: 0}
   actionListOnTurnOff: {fileID: 0}
-  updateWhenFadeOut: 1
+  updateWhenFadeOut: 0
   hideDuringSaveScreenshots: 1
-  fitWithinScreen: 1
+  fitWithinScreen: 0
   backgroundTexture: {fileID: 0}
   visibleElements:
   - {fileID: 8831454729693166425}
@@ -811,7 +811,7 @@ MonoBehaviour:
   - {fileID: 2580212065684710455}
   - {fileID: 6773002483939955053}
   transitionProgress: 0
-  appearType: 4
+  appearType: 5
   speechMenuType: 0
   speechMenuLimit: 0
   limitToCharacters: 
@@ -3490,7 +3490,7 @@ MonoBehaviour:
   - {fileID: 8472056267593312757}
   - {fileID: -7338069741527253596}
   - {fileID: -8369817212216705777}
-  globalDepth: 0
+  globalDepth: 850
   pauseTexture: {fileID: 0}
   scaleTextEffects: 0
   keyboardControlWhenPaused: 0

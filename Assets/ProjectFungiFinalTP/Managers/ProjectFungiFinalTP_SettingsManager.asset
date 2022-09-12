@@ -41,7 +41,7 @@ MonoBehaviour:
   players: []
   movementMethod: 0
   inputMethod: 0
-  interactionMethod: 2
+  interactionMethod: 0
   selectInteractions: 0
   autoHideInteractionIcons: 1
   cancelInteractions: 0
@@ -146,7 +146,7 @@ MonoBehaviour:
   closeInteractionMenusIfPlayerLeavesVicinity: 0
   placeDistantHotspotsOnSeparateLayer: 1
   hotspotsInVicinity: 0
-  hotspotIconDisplay: 1
+  hotspotIconDisplay: 0
   hotspotIcon: 0
   hotspotIconTexture: {fileID: 0}
   hotspotIconGraphic:
