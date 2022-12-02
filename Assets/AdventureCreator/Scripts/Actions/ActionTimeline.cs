@@ -83,6 +83,10 @@ namespace AC
 		
 		public override float Run ()
 		{
+			#if ACIgnoreTimeline
+			return 0f;
+			#endif
+
 			if (!isRunning)
 			{
 				if (runtimeDirector)
@@ -176,6 +180,10 @@ namespace AC
 
 		public override void Skip ()
 		{
+			#if ACIgnoreTimeline
+			return;
+			#endif
+
 			if (runtimeDirector != null)
 			{
 				if (disableCamera)
@@ -183,13 +191,16 @@ namespace AC
 					KickStarter.mainCamera.Enable ();
 				}
 
+				if (!isRunning)
+				{
+					PrepareDirector ();
+				}
+
 				switch (method)
 				{
 					case ActionDirectorMethod.Play:
 						if (runtimeDirector.extrapolationMode == DirectorWrapMode.Loop)
 						{
-							PrepareDirector ();
-
 							if (restart)
 							{
 								runtimeDirector.Play ();
@@ -201,10 +212,18 @@ namespace AC
 							return;
 						}
 
+						if (!isRunning)
+						{
+							runtimeDirector.time = runtimeDirector.duration;
+							runtimeDirector.Evaluate ();
+							runtimeDirector.Stop ();
+						}
+
 						PrepareDirectorEnd ();
 
-						runtimeDirector.Stop ();
 						runtimeDirector.time = runtimeDirector.duration;
+						runtimeDirector.Evaluate ();
+						runtimeDirector.Stop ();
 						break;
 
 					case ActionDirectorMethod.Stop:
@@ -229,8 +248,8 @@ namespace AC
 		{
 			if (isRunning)
 			{
-				isRunning = false;
 				Skip ();
+				isRunning = false;
 			}
 		}
 

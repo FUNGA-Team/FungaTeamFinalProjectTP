@@ -15,22 +15,26 @@ using UnityEngine;
 namespace AC
 {
 
-	/**
-	 * This script is attached to Moveable, Draggable or PickUp objects you wish to save.
-	 */
+	/** This script is attached to Moveable, Draggable or PickUp objects you wish to save. */
 	[AddComponentMenu("Adventure Creator/Save system/Remember Moveable")]
 	[HelpURL("https://www.adventurecreator.org/scripting-guide/class_a_c_1_1_remember_moveable.html")]
 	public class RememberMoveable : Remember
 	{
 
+		#region Variables
+
 		/** Determines whether the object is on or off when the game starts */
 		public AC_OnOff startState = AC_OnOff.On;
-		
-		private bool loadedData = false;
+
+		#endregion
 
 
-		private void Awake ()
+		#region UnityStandards
+
+		protected override void Start ()
 		{
+			base.Start ();
+
 			if (loadedData) return;
 
 			if (KickStarter.settingsManager && GameIsPlaying () && isActiveAndEnabled)
@@ -111,7 +115,6 @@ namespace AC
 			MoveableData data = Serializer.LoadScriptData <MoveableData> (stringData);
 			if (data == null)
 			{
-				loadedData = false;
 				return;
 			}
 			SavePrevented = data.savePrevented; if (savePrevented) return;
@@ -175,13 +178,13 @@ namespace AC
 
 			loadedData = true;
 		}
-		
-	}
-	
 
-	/**
-	 * A data container used by the RememberMoveable script.
-	 */
+		#endregion
+
+	}
+
+
+	/** A data container used by the RememberMoveable script. */
 	[System.Serializable]
 	public class MoveableData : RememberData
 	{

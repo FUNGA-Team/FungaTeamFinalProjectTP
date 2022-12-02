@@ -268,6 +268,8 @@ namespace AC
 		public float runSpeedScale = 6f;
 		/** The factor by which speed is reduced when reversing (Tank Controls / First Person only) */
 		public float reverseSpeedFactor = 1f;
+		/** If True, it is possible to run backwards (Tank Controls / First Person only) */
+		public bool canRunInReverse = true;
 		/** The turn speed */
 		public float turnSpeed = 7f;
 		/** The acceleration factor */
@@ -403,7 +405,9 @@ namespace AC
 		private Sound speechSound;
 		
 		private bool isUnderTimelineControl;
-		private CharacterAnimation2DShot activeCharacterAnimation2DShot;
+		#if !ACIgnoreTimeline
+		private CharacterAnimationShot activeCharacterAnimationShot;
+		#endif
 
 		protected bool timelineHeadTurnOverride;
 		protected Vector3 timelineHeadTurnTargetOffset;
@@ -907,11 +911,15 @@ namespace AC
 
 		private void SpeedUpdate ()
 		{
+			#if !ACIgnoreTimeline
 			if (AnimationControlledByAnimationShot)
 			{
 				moveSpeed = moveSpeedLerp.Update (moveSpeed, GetTargetSpeed (), acceleration);
 			}
 			else if (charState == CharState.Move)
+			#else
+			if (charState == CharState.Move)
+			#endif
 			{
 				lastDist = Mathf.Infinity;
 				Accelerate ();
@@ -1003,10 +1011,12 @@ namespace AC
 				AnimateHeadTurn ();
 			}
 
+			#if !ACIgnoreTimeline
 			if (AnimationControlledByAnimationShot)
 			{
 				return;
 			}
+			#endif
 			
 			if (isJumping)
 			{
@@ -1157,8 +1167,12 @@ namespace AC
 								}
 							}
 						}
-						
+
+						#if !ACIgnoreTimeline
 						if (!noMove && !AnimationControlledByAnimationShot)
+						#else
+						if (!noMove)
+						#endif
 						{
 							float _deltaTime = (antiGlideMode) ? Time.fixedDeltaTime : Time.deltaTime;
 
@@ -1352,6 +1366,7 @@ namespace AC
 			}
 			else
 			{
+				#if !ACIgnoreTimeline
 				if (AnimationControlledByAnimationShot)
 				{
 					if (isRunning)
@@ -1360,6 +1375,7 @@ namespace AC
 					}
 					return 1f;
 				}
+				#endif
 
 				if (isRunning)
 				{
@@ -4095,6 +4111,17 @@ namespace AC
 		 */
 		public string GetName (int languageNumber = 0)
 		{
+			#if UNITY_EDITOR
+			if (!Application.isPlaying)
+			{
+				if (!string.IsNullOrEmpty (speechLabel))
+				{
+					return speechLabel;
+				}
+				return gameObject.name;
+			}
+			#endif
+
 			if (string.IsNullOrEmpty (speechLabel))
 			{
 				return gameObject.name;
@@ -4439,16 +4466,18 @@ namespace AC
 		}
 
 
-		/** The CharacterAnimation2DShot that's currently being applied to the character, if sprite-based */
-		public CharacterAnimation2DShot ActiveCharacterAnimation2DShot
+		#if !ACIgnoreTimeline
+
+		/** The CharacterAnimationShot that's currently being applied to the character, if sprite-based */
+		public CharacterAnimationShot ActiveCharacterAnimationShot
 		{
 			get
 			{
-				return activeCharacterAnimation2DShot;
+				return activeCharacterAnimationShot;
 			}
 			set
 			{
-				activeCharacterAnimation2DShot = value;
+				activeCharacterAnimationShot = value;
 			}
 		}
 
@@ -4457,9 +4486,11 @@ namespace AC
 		{
 			get
 			{
-				return (activeCharacterAnimation2DShot != null);
+				return activeCharacterAnimationShot != null;
 			}
 		}
+
+		#endif
 
 
 		public IKLimbController LeftHandIKController
@@ -4532,6 +4563,7 @@ namespace AC
 		}
 
 
+		/** Checks if the character is currently speaking */
 		public bool isTalking
 		{
 			get

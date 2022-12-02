@@ -170,6 +170,10 @@ namespace AC
 				}
 
 				KickStarter.eventManager.Call_OnChangeLanguage (optionsData.language);
+				KickStarter.eventManager.Call_OnChangeSubtitles (optionsData.showSubtitles);
+				KickStarter.eventManager.Call_OnChangeVolume (SoundType.Music, optionsData.musicVolume);
+				KickStarter.eventManager.Call_OnChangeVolume (SoundType.SFX, optionsData.sfxVolume);
+				KickStarter.eventManager.Call_OnChangeVolume (SoundType.Speech, optionsData.speechVolume);
 			}
 			
 			if (Application.isPlaying && KickStarter.saveSystem)

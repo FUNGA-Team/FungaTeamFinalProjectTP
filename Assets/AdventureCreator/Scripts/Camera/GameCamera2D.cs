@@ -103,7 +103,7 @@ namespace AC
 			base.Start ();
 
 			ResetTarget ();
-			if (target)
+			if (Target)
 			{
 				MoveCameraInstant ();
 			}
@@ -128,7 +128,7 @@ namespace AC
 		/** Force-sets the current position as its original position. This should not normally need to be called externally. */
 		public void ForceRecordOriginalPosition ()
 		{
-			if (!haveSetOriginalPosition && backgroundConstraint && Camera.orthographic && (limitHorizontal || limitVertical))
+			if (!haveSetOriginalPosition && backgroundConstraint && Camera.orthographic && (limitHorizontal || limitVertical) && Target)
 			{
 				Transform.position = new Vector3 (0f, 0f, Transform.position.z);
 			}
@@ -146,15 +146,11 @@ namespace AC
 
 		public override void MoveCameraInstant ()
 		{
-			if (targetIsPlayer && KickStarter.player)
-			{
-				target = KickStarter.player.Transform;
-			}
 			SetOriginalPosition ();
 
 			if (!lockHorizontal || !lockVertical)
 			{
-				if (target)
+				if (Target)
 				{
 					SetDesired ();
 			
@@ -187,9 +183,7 @@ namespace AC
 		}
 
 
-		/**
-		 * Snaps the camera to its offset values and recalculates the camera's projection matrix.
-		 */
+		/** Snaps the camera to its offset values and recalculates the camera's projection matrix. */
 		public void SnapToOffset ()
 		{
 			perspectiveOffset = afterOffset;
@@ -197,9 +191,7 @@ namespace AC
 		}
 
 
-		/**
-		 * Sets the camera's rotation and projection according to the chosen settings in SettingsManager.
-		 */
+		/** Sets the camera's rotation and projection according to the chosen settings in SettingsManager. */
 		public void SetCorrectRotation ()
 		{
 			if (KickStarter.settingsManager)
@@ -373,7 +365,7 @@ namespace AC
 
 		protected void SetDesired ()
 		{
-			Vector2 targetOffset = GetOffsetForPosition (target.position);
+			Vector2 targetOffset = GetOffsetForPosition (Target.position);
 			if (targetOffset.x < (perspectiveOffset.x - freedom.x))
 			{
 				desiredOffset.x = targetOffset.x + freedom.x;
@@ -425,12 +417,7 @@ namespace AC
 
 		protected void MoveCamera ()
 		{
-			if (targetIsPlayer && KickStarter.player)
-			{
-				target = KickStarter.player.Transform;
-			}
-			
-			if (target && (!lockHorizontal || !lockVertical))
+			if (Target && (!lockHorizontal || !lockVertical))
 			{
 				SetDesired ();
 
@@ -469,7 +456,7 @@ namespace AC
 
 		protected void SetProjection ()
 		{
-			if (target == null) return;
+			if (Target == null) return;
 
 			Vector2 snapOffset = GetSnapOffset ();
 

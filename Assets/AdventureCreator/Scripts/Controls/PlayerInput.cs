@@ -66,8 +66,6 @@ namespace AC
 		protected SimulateInputType menuInput;
 		
 		// Controller movement
-		/** The movement speed of a keyboard or controller-controlled cursor */
-		public float cursorMoveSpeed = 4f;
 		private bool cameraLockSnap = false;
 		protected Vector2 xboxCursor;
 		protected Vector2 mousePosition;
@@ -613,8 +611,8 @@ namespace AC
 					else
 					{
 						float speedFactor = (KickStarter.settingsManager.scaleCursorSpeedWithScreen)
-											? cursorMoveSpeed * GetDeltaTime () * KickStarter.mainCamera.PlayableScreenDiagonalLength * 0.5f
-											: cursorMoveSpeed * GetDeltaTime () * 300f;
+											? KickStarter.settingsManager.simulatedCursorMoveSpeed * GetDeltaTime () * KickStarter.mainCamera.PlayableScreenDiagonalLength * 0.5f
+											: KickStarter.settingsManager.simulatedCursorMoveSpeed * GetDeltaTime () * 300f;
 
 						xboxCursor.x += InputGetAxis ("CursorHorizontal") * speedFactor;
 						xboxCursor.y += InputGetAxis ("CursorVertical") * speedFactor;
@@ -961,7 +959,7 @@ namespace AC
 			{
 				if (mouseState == MouseState.Normal)
 				{
-					if (InvInstance.IsValid (KickStarter.runtimeInventory.SelectedInstance) &&  KickStarter.settingsManager.InventoryDragDrop)
+					if (InvInstance.IsValid (KickStarter.runtimeInventory.SelectedInstance) && KickStarter.settingsManager.InventoryDragDrop)
 					{
 						return true;
 					}
@@ -1938,7 +1936,7 @@ namespace AC
 		{
 			if (InvInstance.IsValid (KickStarter.runtimeInventory.SelectedInstance) &&
 				KickStarter.settingsManager.InventoryDragDrop &&
-				KickStarter.settingsManager.dragDropThreshold > 0 &&
+				KickStarter.settingsManager.dragThreshold > 0 &&
 				(KickStarter.stateHandler.IsInGameplay () || KickStarter.stateHandler.gameState == GameState.Paused))
 			{
 				dragState = DragState.PreInventory;
@@ -1953,7 +1951,7 @@ namespace AC
 			
 			if (InvInstance.IsValid (KickStarter.runtimeInventory.SelectedInstance) && KickStarter.settingsManager.InventoryDragDrop && (KickStarter.stateHandler.IsInGameplay () || KickStarter.stateHandler.gameState == GameState.Paused))
 			{
-				if (dragVector.magnitude >= KickStarter.settingsManager.dragDropThreshold)
+				if (dragVector.magnitude / ACScreen.LongestDimension >= KickStarter.settingsManager.dragThreshold)
 				{
 					dragState = DragState.Inventory;
 				}
@@ -1972,6 +1970,11 @@ namespace AC
 			}
 			else if (IsDragObjectHeld ())
 			{
+				if (dragState == DragState.None && !cursorIsLocked && (deltaDragMouse.magnitude * Time.deltaTime <= 1f) && (GetInvertedMouse () - dragStartPosition).magnitude / ACScreen.LongestDimension < KickStarter.settingsManager.dragThreshold)
+				{
+					return;
+				}
+
 				dragState = DragState.Moveable;
 			}
 			else if (KickStarter.mainCamera && KickStarter.mainCamera.attachedCamera && KickStarter.mainCamera.attachedCamera.isDragControlled && !KickStarter.stateHandler.AreCamerasDisabled ())
@@ -1982,23 +1985,22 @@ namespace AC
 				}
 
 				if (!KickStarter.playerInteraction.IsMouseOverHotspot () ||
+					!KickStarter.stateHandler.IsInGameplay () ||
 					(KickStarter.playerInteraction.GetActiveHotspot () && 
 						(KickStarter.settingsManager.interactionMethod == AC_InteractionMethod.ContextSensitive || 
 						(KickStarter.playerInteraction.GetActiveHotspot ().IsSingleInteraction () && KickStarter.settingsManager.interactionMethod == AC_InteractionMethod.ChooseHotspotThenInteraction))))
 				{
-					dragState = DragState._Camera;
-
-					if (!cursorIsLocked && (deltaDragMouse.magnitude * Time.deltaTime <= 1f) && (GetInvertedMouse () - dragStartPosition).magnitude < 10f)
+					if (dragState == DragState.None && !cursorIsLocked && (deltaDragMouse.magnitude * Time.deltaTime <= 1f) && (GetInvertedMouse () - dragStartPosition).magnitude / ACScreen.LongestDimension < KickStarter.settingsManager.dragThreshold)
 					{
-						dragState = DragState.None;
+						return;
 					}
+
+					dragState = DragState._Camera;
 				}
 			}
-			else if ((KickStarter.settingsManager.movementMethod == MovementMethod.Drag || KickStarter.settingsManager.movementMethod == MovementMethod.StraightToCursor ||
-					  (KickStarter.settingsManager.movementMethod != MovementMethod.PointAndClick && KickStarter.settingsManager.inputMethod == InputMethod.TouchScreen))
-					&& KickStarter.settingsManager.movementMethod != MovementMethod.None && KickStarter.stateHandler.IsInGameplay ())
+			else if (KickStarter.settingsManager.CanDragPlayer && KickStarter.stateHandler.IsInGameplay () && !KickStarter.stateHandler.MovementIsOff)
 			{
-				if (!KickStarter.playerMenus.IsMouseOverMenu () && !KickStarter.playerMenus.IsInteractionMenuOn ())
+				if (!KickStarter.playerMenus.IsMouseOverMenu ())
 				{
 					if (KickStarter.playerInteraction.IsMouseOverHotspot ())
 					{}

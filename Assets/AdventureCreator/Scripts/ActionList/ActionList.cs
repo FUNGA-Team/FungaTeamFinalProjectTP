@@ -75,7 +75,8 @@ namespace AC
 		private const string parameterSeparator = "{PARAM_SEP}";
 
 		private WaitForSeconds delayWait = new WaitForSeconds (0.05f);
-		private WaitForEndOfFrame delayFrame = new WaitForEndOfFrame ();
+		private WaitForEndOfFrame delayFrame = null;//new WaitForEndOfFrame (); // set to null to keep updates in main Update loop
+		private bool waitedAnyFrame;
 
 		protected bool isChangingScene = false;
 		private int skipIteractions = 0; // Used to combat StackOverflow exceptions
@@ -96,6 +97,7 @@ namespace AC
 		public void BackupData ()
 		{
 			backupData = JsonAction.BackupActions (actions);
+			EditorUtility.SetDirty (this);
 		}
 
 
@@ -107,11 +109,40 @@ namespace AC
 		}
 
 
+		public bool HasDataToRestore ()
+		{
+			return backupData != null && backupData.Length > 0;
+		}
+
+
 		public void RestoreData ()
 		{
-			if (backupData != null && backupData.Length > 0)
+			if (HasDataToRestore ())
 			{
 				actions = JsonAction.RestoreActions (backupData);
+				EditorUtility.SetDirty (this);
+			}
+			else
+			{
+				ACDebug.LogWarning ("Could not restore data for ActionList "+ this + " - no backup data found!", this);
+			}
+		}
+
+
+		[MenuItem ("CONTEXT/ActionList/Action data/Clear")]
+		public static void ClearData (MenuCommand command)
+		{
+			ActionList actionList = (ActionList) command.context;
+			actionList.ClearData ();
+		}
+
+
+		public void ClearData ()
+		{
+			if (HasDataToRestore ())
+			{
+				backupData = null;
+				EditorUtility.SetDirty (this);
 			}
 		}
 
@@ -424,12 +455,19 @@ namespace AC
 				action.isRunning = false;
 				float waitTime = action.Run ();
 
+				if (action.RunAllOutputs)
+				{
+					waitedAnyFrame = true;
+				}
+
 				PrintActionComment (action);
 
 				if (!Mathf.Approximately (waitTime, 0f))
 				{
 					while (action.isRunning)
 					{
+						waitedAnyFrame = true;
+
 						if (isChangingScene)
 						{
 							ACDebug.Log ("Cannot continue ActionList " + this + " while changing scene - will resume once loading is complete.", this, action);
@@ -653,7 +691,10 @@ namespace AC
 
 		private IEnumerator EndCutscene ()
 		{
-			yield return delayFrame;
+			if (!isSkipping && waitedAnyFrame)
+			{
+				yield return delayFrame;
+			}
 
 			if (AreActionsRunning ())
 			{
@@ -706,6 +747,7 @@ namespace AC
 		public void ResetList ()
 		{
 			isSkipping = false;
+			waitedAnyFrame = false;
 			StopAllCoroutines ();
 
 			foreach (Action action in actions)
@@ -1082,7 +1124,7 @@ namespace AC
 
 			foreach (Action action in actions)
 			{
-				if (action && action is IItemReferencerAction)
+				if (action != null && action is IItemReferencerAction)
 				{
 					IItemReferencerAction itemReferencerAction = action as IItemReferencerAction;
 					int thisNumReferences = itemReferencerAction.GetNumItemReferences (itemID, parameters);
@@ -1114,7 +1156,7 @@ namespace AC
 
 			foreach (Action action in actions)
 			{
-				if (action && action is IItemReferencerAction)
+				if (action != null && action is IItemReferencerAction)
 				{
 					IItemReferencerAction itemReferencerAction = action as IItemReferencerAction;
 					int thisNumReferences = itemReferencerAction.UpdateItemReferences (oldItemID, newItemID, parameters);
@@ -1136,7 +1178,7 @@ namespace AC
 
 			foreach (Action action in actions)
 			{
-				if (action && action is IMenuReferencer)
+				if (action != null && action is IMenuReferencer)
 				{
 					IMenuReferencer menuReferencer = action as IMenuReferencer;
 					int thisNumReferences = menuReferencer.GetNumMenuReferences (menuName, elementName);
@@ -1187,7 +1229,7 @@ namespace AC
 
 			foreach (Action action in actions)
 			{
-				if (action && action is IVariableReferencerAction)
+				if (action != null && action is IVariableReferencerAction)
 				{
 					IVariableReferencerAction variableReferencer = action as IVariableReferencerAction;
 					int thisNumReferences = variableReferencer.GetNumVariableReferences (_location, variableID, parameters, _variables, _variablesConstantID);
@@ -1238,7 +1280,7 @@ namespace AC
 
 			foreach (Action action in actions)
 			{
-				if (action && action is IVariableReferencerAction)
+				if (action != null && action is IVariableReferencerAction)
 				{
 					IVariableReferencerAction variableReferencer = action as IVariableReferencerAction;
 					int thisNumReferences = variableReferencer.UpdateVariableReferences (_location, oldVariableID, newVariableID, parameters, _variables, _variablesConstantID);
@@ -1270,7 +1312,7 @@ namespace AC
 
 			foreach (Action action in actions)
 			{
-				if (action && action is IDocumentReferencerAction)
+				if (action != null && action is IDocumentReferencerAction)
 				{
 					IDocumentReferencerAction documentReferencerAction = action as IDocumentReferencerAction;
 					int thisNumReferences = documentReferencerAction.GetNumDocumentReferences (documentID, parameters);
@@ -1302,7 +1344,7 @@ namespace AC
 
 			foreach (Action action in actions)
 			{
-				if (action && action is IDocumentReferencerAction)
+				if (action != null && action is IDocumentReferencerAction)
 				{
 					IDocumentReferencerAction documentReferencerAction = action as IDocumentReferencerAction;
 					int thisNumReferences = documentReferencerAction.UpdateDocumentReferences (oldDocumentID, newDocumentID, parameters);
@@ -1324,7 +1366,7 @@ namespace AC
 
 			foreach (Action action in actions)
 			{
-				if (action && action is IObjectiveReferencerAction)
+				if (action != null && action is IObjectiveReferencerAction)
 				{
 					IObjectiveReferencerAction objectiveReferencerAction = action as IObjectiveReferencerAction;
 					int thisNumReferences = objectiveReferencerAction.GetNumObjectiveReferences (objectiveID);
@@ -1346,7 +1388,7 @@ namespace AC
 
 			foreach (Action action in actions)
 			{
-				if (action && action is IObjectiveReferencerAction)
+				if (action != null && action is IObjectiveReferencerAction)
 				{
 					IObjectiveReferencerAction objectiveReferencerAction = action as IObjectiveReferencerAction;
 					int thisNumReferences = objectiveReferencerAction.UpdateObjectiveReferences (oldObjectiveID, newObjectiveID);
@@ -1432,7 +1474,7 @@ namespace AC
 			{
 				foreach (Action action in actions)
 				{
-					if (action && action is iActionListAssetReferencer)
+					if (action != null && action is iActionListAssetReferencer)
 					{
 						iActionListAssetReferencer objectiveReferencerAction = action as iActionListAssetReferencer;
 						{

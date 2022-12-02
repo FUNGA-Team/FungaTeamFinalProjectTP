@@ -968,7 +968,7 @@ namespace AC
 			{
 				if (playerPrefab != value)
 				{
-					if (playerPrefab)
+					if (playerPrefab && playerPrefab.transform.parent == null)
 					{
 						UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene (playerPrefab.gameObject, SceneChanger.CurrentScene);
 					}
@@ -1007,10 +1007,13 @@ namespace AC
 								runtimeInventory.localItems.Clear ();
 								runtimeDocuments.ClearCollection ();
 
-								runtimeInventory.AssignPlayerInventory (InvCollection.LoadData (playerData.inventoryData));
-								runtimeDocuments.AssignPlayerDocuments (playerData);
-								runtimeObjectives.AssignPlayerObjectives (playerData);
-
+								if (playerData != null)
+								{
+									runtimeInventory.AssignPlayerInventory (InvCollection.LoadData (playerData.inventoryData));
+									runtimeDocuments.AssignPlayerDocuments (playerData);
+									runtimeObjectives.AssignPlayerObjectives (playerData);
+								}
+								
 								// Menus
 								foreach (AC.Menu menu in PlayerMenus.GetMenus ())
 								{
@@ -1025,11 +1028,15 @@ namespace AC
 								}
 							}
 
-							if (mainCamera)
+							if (playerData == null)
+							{
+								ACDebug.LogWarning ("No PlayerData found for new Player " + playerPrefab, playerPrefab);
+							}
+							else if (mainCamera)
 							{
 								mainCamera.LoadData (playerData, false);
 							}
-							
+
 							DontDestroyOnLoad (playerPrefab);
 						}
 						else
@@ -1325,10 +1332,11 @@ namespace AC
 		 * <summary>Restarts the game, resetting the game to its original state.  Save game files and options data will not be affected</summary>
 		 * <param name = "resetMenus">If True, Menus will be rebuilt based on their original settings in the Menu Manager</param>
 		 * <param name = "newSceneIndex">The build index number of the scene to switch to</param>
+		 * <param name = "killActionLists">If True, then all ActionLists currently running will be killed</param>
 		 */
-		public static void RestartGame (bool rebuildMenus, int newSceneIndex)
+		public static void RestartGame (bool rebuildMenus, int newSceneIndex, bool killActionLists = false)
 		{
-			OnRestart (rebuildMenus);
+			OnRestart (rebuildMenus, killActionLists);
 			KickStarter.sceneChanger.ChangeScene (newSceneIndex, false, true);
 		}
 
@@ -1337,16 +1345,22 @@ namespace AC
 		 * <summary>Restarts the game, resetting the game to its original state.  Save game files and options data will not be affected</summary>
 		 * <param name = "resetMenus">If True, Menus will be rebuilt based on their original settings in the Menu Manager</param>
 		 * <param name = "newSceneName">The name of the scene to switch to</param>
+		 * <param name = "killActionLists">If True, then all ActionLists currently running will be killed</param>
 		 */
-		public static void RestartGame (bool rebuildMenus, string newSceneName)
+		public static void RestartGame (bool rebuildMenus, string newSceneName, bool killActionLists = false)
 		{
-			OnRestart (rebuildMenus);
+			OnRestart (rebuildMenus, killActionLists);
 			KickStarter.sceneChanger.ChangeScene (newSceneName, false, true);
 		}
 
 
-		private static void OnRestart (bool rebuildMenus)
+		private static void OnRestart (bool rebuildMenus, bool killActionLists)
 		{
+			if (killActionLists)
+			{
+				KickStarter.actionListManager.KillAllLists ();
+			}
+
 			KickStarter.runtimeInventory.SetNull ();
 			KickStarter.runtimeInventory.RemoveRecipes ();
 
@@ -1355,7 +1369,7 @@ namespace AC
 				KickStarter.mainCamera.ForceOverlayForFrames (6);
 			}
 
-			if (KickStarter.player)
+			if (KickStarter.player && !KickStarter.player.IsLocalPlayer ())
 			{
 				DestroyImmediate (KickStarter.player.gameObject);
 			}

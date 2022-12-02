@@ -47,21 +47,24 @@ namespace AC
 
 		#region UnityStandards
 		
-		private void OnEnable ()
+		protected void OnEnable ()
+		{
+			if (KickStarter.stateHandler) KickStarter.stateHandler.Register (this);
+			EventManager.OnInitialiseScene -= OnInitialiseScene;
+			EventManager.OnInitialiseScene += OnInitialiseScene;
+		}
+
+
+		protected virtual void Start ()
 		{
 			if (KickStarter.stateHandler) KickStarter.stateHandler.Register (this);
 		}
 
 
-		private void Start ()
-		{
-			if (KickStarter.stateHandler) KickStarter.stateHandler.Register (this);
-		}
-
-
-		private void OnDisable ()
+		protected void OnDisable ()
 		{
 			if (KickStarter.stateHandler) KickStarter.stateHandler.Unregister (this);
+			EventManager.OnInitialiseScene -= OnInitialiseScene;
 		}
 
 		#endregion
@@ -97,6 +100,13 @@ namespace AC
 			#endif
 			return true;
 		}
+
+		#endregion
+
+
+		#region CustomEvents
+
+		protected virtual void OnInitialiseScene () { }
 
 		#endregion
 
@@ -355,15 +365,11 @@ namespace AC
 		/**
 		 * <summary>Sets a new Constant ID number.</summary>
 		 * <param name = "forcePrefab">If True, sets "retainInPrefab" to True. Otherwise, it will be determined by whether or not the component is part of an asset file.</param>
+		 * <returns>The new Constant ID number</returns>
 		 */
 		public int AssignInitialValue (bool forcePrefab = false)
 		{
-			if (forcePrefab)
-			{
-				retainInPrefab = true;
-				SetNewID_Prefab ();
-			}
-			else if (UnityVersionHandler.ShouldAssignPrefabConstantID (gameObject))
+			if (forcePrefab || UnityVersionHandler.ShouldAssignPrefabConstantID (gameObject))
 			{
 				retainInPrefab = true;
 				SetNewID_Prefab ();
@@ -399,9 +405,7 @@ namespace AC
 		}
 
 
-		/**
-		 * Sets a new Constant ID number for a prefab.
-		 */
+		/** Sets a new Constant ID number for a prefab. */
 		public void SetNewID_Prefab ()
 		{
 			SetNewID ();
@@ -447,6 +451,14 @@ namespace AC
 			ACDebug.Log ("Set new ID for " + this.GetType ().ToString () + " to " + gameObject.name + ": " + constantID, gameObject);
 		}
 		
+
+		public void SetManualID (int _id)
+		{
+			autoManual = AutoManual.Manual;
+			constantID = _id;
+			UnityVersionHandler.CustomSetDirty (this, true);
+		}
+
 		
 		private void CheckForDuplicateIDs ()
 		{
@@ -626,14 +638,30 @@ namespace AC
 	}
 
 
-	/**
-	 * A subclass of ConstantID, that is used to distinguish further subclasses from ConstantID components.
-	 */
+	/** A subclass of ConstantID, that is used to distinguish further subclasses from ConstantID components. */
 	[System.Serializable]
 	public abstract class Remember : ConstantID
 	{
 
+		#region Variables
+
 		protected bool savePrevented = false;
+		protected bool loadedData = false;
+
+		#endregion
+
+
+		#region CustomEvents
+
+		protected override void OnInitialiseScene ()
+		{
+			loadedData = false;
+		}
+
+		#endregion
+
+
+		#region GetSet
 
 		/** If True, saving is prevented */
 		public bool SavePrevented
@@ -648,12 +676,22 @@ namespace AC
 			}
 		}
 
-	}
-	
 
-	/**
-	 * The base class of saved data.  Each Remember subclass uses its own RememberData subclass to store its data.
-	 */
+		/** Checks if data has been loaded for this component. */
+		public bool LoadedData
+		{
+			get
+			{
+				return loadedData;
+			}
+		}
+
+		#endregion
+
+	}
+
+
+	/** The base class of saved data.  Each Remember subclass uses its own RememberData subclass to store its data.	 */
 	[System.Serializable]
 	public class RememberData
 	{

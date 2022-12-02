@@ -653,7 +653,7 @@ namespace AC
 				targetDistance = normalDistance * zoomAmount;
 			}
 
-			actualDistance = distanceLerp.Update (actualDistance, targetDistance, distanceAcceleration);
+			actualDistance = distanceAcceleration > 0f ? distanceLerp.Update (actualDistance, targetDistance, distanceAcceleration) : targetDistance;
 			if (focalPointIsTarget)
 			{
 				focalDistance = actualDistance;
@@ -1350,7 +1350,7 @@ namespace AC
 			EditorGUILayout.LabelField ("Spin", EditorStyles.largeLabel);
 			if (!isDragControlled)
 			{
-				spinAxis = EditorGUILayout.TextField ("Spin axis:", spinAxis);
+				spinAxis = EditorGUILayout.TextField ("Spin input axis:", spinAxis);
 			}
 			inputInfluence.x = EditorGUILayout.FloatField ("Input influence:", inputInfluence.x);
 			inputSmoothing.x = EditorGUILayout.Slider ("Input acceleration:", inputSmoothing.x, 0f, 1f);
@@ -1384,7 +1384,7 @@ namespace AC
 			EditorGUILayout.LabelField ("Pitch", EditorStyles.largeLabel);
 			if (!isDragControlled)
 			{
-				pitchAxis = EditorGUILayout.TextField ("Pitch axis:", pitchAxis);
+				pitchAxis = EditorGUILayout.TextField ("Pitch input axis:", pitchAxis);
 			}
 			inputInfluence.y = EditorGUILayout.FloatField ("Input influence:", inputInfluence.y);
 			inputSmoothing.y = EditorGUILayout.Slider ("Input acceleration:", inputSmoothing.y, 0f, 1f);

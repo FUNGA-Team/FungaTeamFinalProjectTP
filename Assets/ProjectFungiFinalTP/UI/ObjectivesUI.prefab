@@ -991,6 +991,7 @@ GameObject:
   - component: {fileID: 11479294}
   - component: {fileID: 22553818}
   - component: {fileID: 11405338}
+  - component: {fileID: 3826324838223679255}
   m_Layer: 5
   m_Name: ObjectivesUI
   m_TagString: Untagged
@@ -1109,6 +1110,21 @@ MonoBehaviour:
   maxAnchorPoint: {x: 0.5, y: 0.5}
   updatePosition: 1
   updateScale: 1
+--- !u!114 &3826324838223679255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 133716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f72e60470f1fa4fd1825cd67ce482cf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  constantID: 24756
+  retainInPrefab: 1
+  autoManual: 0
 --- !u!1 &140414
 GameObject:
   m_ObjectHideFlags: 0

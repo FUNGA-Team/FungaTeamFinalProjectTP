@@ -812,7 +812,7 @@ namespace AC
 								{
 									if (!MoveUIMenuToHotspot (menu, KickStarter.playerInteraction.GetActiveHotspot ()))
 									{
-										if (AreInteractionMenusOn ())
+										if (AreInteractionMenusOn () || menu.IsFadingOut ())
 										{
 											MoveUIMenuToHotspot (menu, KickStarter.playerInteraction.GetLastOrActiveHotspot ());
 										}
@@ -963,7 +963,7 @@ namespace AC
 						{
 							if (!MoveMenuToHotspot (menu, KickStarter.playerInteraction.GetActiveHotspot ()))
 							{
-								if (AreInteractionMenusOn ())
+								if (AreInteractionMenusOn () || menu.IsFadingOut ())
 								{
 									MoveMenuToHotspot (menu, KickStarter.playerInteraction.GetLastOrActiveHotspot ());
 								}
@@ -1079,7 +1079,7 @@ namespace AC
 			switch (menu.appearType)
 			{
 				case AppearType.Manual:
-					if (menu.IsVisible () && !menu.isLocked && menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks)
+					if (menu.IsVisible () && !menu.isLocked && menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks && !KickStarter.playerInput.IsCursorLocked ())
 					{
 						foundMouseOverMenu = true;
 					}
@@ -1088,7 +1088,7 @@ namespace AC
 				case AppearType.OnViewDocument:
 					if (KickStarter.runtimeDocuments.ActiveDocument != null && !menu.isLocked && (!KickStarter.stateHandler.IsPaused () || menu.IsBlocking ()))
 					{
-						if (menu.IsVisible () && menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks)
+						if (menu.IsVisible () && menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks && !KickStarter.playerInput.IsCursorLocked ())
 						{
 							foundMouseOverMenu = true;
 						}
@@ -1108,7 +1108,7 @@ namespace AC
 							menu.TurnOn (true);
 						}
 
-						if (menu.IsOn () && menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks)
+						if (menu.IsOn () && menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks && !KickStarter.playerInput.IsCursorLocked ())
 						{
 							foundMouseOverMenu = true;
 						}
@@ -1131,7 +1131,7 @@ namespace AC
 							menu.TurnOn (true);
 						}
 
-						if (menu.IsOn () && menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks)
+						if (menu.IsOn () && menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks && !KickStarter.playerInput.IsCursorLocked ())
 						{
 							foundMouseOverMenu = true;
 						}
@@ -1154,7 +1154,7 @@ namespace AC
 							menu.TurnOn (true);
 						}
 
-						if (menu.IsOn () && menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks)
+						if (menu.IsOn () && menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks && !KickStarter.playerInput.IsCursorLocked ())
 						{
 							foundMouseOverMenu = true;
 						}
@@ -1173,7 +1173,7 @@ namespace AC
 							menu.TurnOn (true);
 						}
 						
-						if (menu.IsOn () && menu.IsPointInside (invertedMouse))
+						if (menu.IsOn () && menu.IsPointInside (invertedMouse) && !KickStarter.playerInput.IsCursorLocked ())
 						{
 							foundMouseOverMenu = true;
 						}
@@ -1192,7 +1192,7 @@ namespace AC
 					if (menu.pauseWhenEnabled)
 					{
 						if ((KickStarter.stateHandler.gameState == GameState.Paused || KickStarter.stateHandler.IsInGameplay ())
-							&& (!menu.isLocked && menu.IsPointInside (invertedMouse) && KickStarter.playerInput.GetDragState () != DragState.Moveable))
+							&& (!menu.isLocked && !KickStarter.playerInput.IsCursorLocked () && menu.IsPointInside (invertedMouse) && KickStarter.playerInput.GetDragState () != DragState.Moveable))
 						{
 							if (menu.IsOff ())
 							{
@@ -1211,7 +1211,7 @@ namespace AC
 					}
 					else
 					{
-						if (KickStarter.stateHandler.IsInGameplay () && !menu.isLocked && menu.IsPointInside (invertedMouse) && KickStarter.playerInput.GetDragState () != DragState.Moveable)
+						if (KickStarter.stateHandler.IsInGameplay () && !menu.isLocked && !KickStarter.playerInput.IsCursorLocked () && menu.IsPointInside (invertedMouse) && KickStarter.playerInput.GetDragState () != DragState.Moveable)
 						{
 							if (menu.IsOff ())
 							{
@@ -1237,7 +1237,7 @@ namespace AC
 				case AppearType.OnContainer:
 					if (KickStarter.playerInput.activeContainer && !menu.isLocked && (KickStarter.stateHandler.IsInGameplay () || (KickStarter.stateHandler.gameState == AC.GameState.Paused && menu.IsBlocking ())))
 					{
-						if (menu.IsVisible () && menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks)
+						if (menu.IsVisible () && !KickStarter.playerInput.IsCursorLocked () && menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks)
 						{
 							foundMouseOverMenu = true;
 						}
@@ -1250,7 +1250,7 @@ namespace AC
 					break;
 
 				case AppearType.DuringConversation:
-					if (menu.IsEnabled () && !menu.isLocked && menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks)
+					if (menu.IsEnabled () && !menu.isLocked && !KickStarter.playerInput.IsCursorLocked () && menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks)
 					{
 						foundMouseOverMenu = true;
 					}
@@ -1270,7 +1270,7 @@ namespace AC
 					break;
 
 				case AppearType.OnInputKey:
-					if (menu.IsEnabled () && !menu.isLocked && menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks)
+					if (menu.IsEnabled () && !menu.isLocked && !KickStarter.playerInput.IsCursorLocked () && menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks)
 					{
 						foundMouseOverMenu = true;
 					}
@@ -1399,7 +1399,7 @@ namespace AC
 						{
 							interactionMenuPauses = menu.pauseWhenEnabled;
 
-							if (menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks)
+							if (menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks && !KickStarter.playerInput.IsCursorLocked ())
 							{
 								foundMouseOverInteractionMenu = true;
 							}
@@ -1425,11 +1425,11 @@ namespace AC
 					{
 						if (menu.IsEnabled () && (KickStarter.stateHandler.IsInGameplay () || menu.pauseWhenEnabled || (KickStarter.stateHandler.IsPaused () && InvInstance.IsValid (menu.TargetInvInstance) && menu.GetGameStateWhenTurnedOn () == GameState.Paused)))
 						{
-							if (menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks)
+							if (menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks && !KickStarter.playerInput.IsCursorLocked ())
 							{
 								foundMouseOverInteractionMenu = true;
 							}
-							else if (!menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks && KickStarter.playerInteraction.GetActiveHotspot () == null && !InvInstance.IsValid (KickStarter.runtimeInventory.HoverInstance) &&
+							else if (!menu.IsPointInside (invertedMouse) && !menu.ignoreMouseClicks && !KickStarter.playerInput.IsCursorLocked () && KickStarter.playerInteraction.GetActiveHotspot () == null && !InvInstance.IsValid (KickStarter.runtimeInventory.HoverInstance) &&
 								(KickStarter.settingsManager.interactionMethod != AC_InteractionMethod.ChooseHotspotThenInteraction || KickStarter.settingsManager.cancelInteractions == CancelInteractions.CursorLeavesMenuOrHotspot))
 							{
 								menu.TurnOff (true);
@@ -1988,9 +1988,7 @@ namespace AC
 		}
 
 
-		/**
-		 * Refreshes any active MenuDialogList elements, after changing the state of dialogue options.
-		 */
+		/** Refreshes any active MenuDialogList elements, after changing the state of dialogue options. */
 		public void RefreshDialogueOptions ()
 		{
 			Menu[] allMenus = GetMenus (true).ToArray ();
@@ -2001,9 +1999,7 @@ namespace AC
 		}
 
 
-		/**
-		 * Updates the state of all Menus set to appear while the game is loading.
-		 */
+		/** Updates the state of all Menus set to appear while the game is loading. */
 		public void UpdateLoadingMenus ()
 		{
 			int languageNumber = Options.GetLanguage ();
@@ -2018,10 +2014,7 @@ namespace AC
 		}
 
 
-		/**
-		 * Checks for inputs made to all Menus.
-		 * This is called every frame by StateHandler.
-		 */
+		/** Checks for inputs made to all Menus. This is called every frame by StateHandler. */
 		public void CheckForInput ()
 		{
 			if (customMenus != null)
@@ -2106,10 +2099,7 @@ namespace AC
 		}
 
 
-		/**
-		 * Updates the state of all Menus.
-		 * This is called every frame by StateHandler.
-		 */
+		/** Updates the state of all Menus. This is called every frame by StateHandler. */
 		public void UpdateAllMenus ()
 		{
 			#if (UNITY_IPHONE || UNITY_ANDROID) && !UNITY_EDITOR
@@ -2667,9 +2657,7 @@ namespace AC
 		}
 
 
-		/**
-		 * Turns off any Menus with appearType = AppearType.OnHotspot.
-		 */
+		/** Turns off any Menus with appearType = AppearType.OnHotspot. */
 		public void DisableHotspotMenus ()
 		{
 			Menu[] allMenus = GetMenus (true).ToArray ();
@@ -2959,9 +2947,7 @@ namespace AC
 		}
 		
 
-		/**
-		 * Takes the ingredients supplied to a MenuCrafting element and sets the appropriate outcome of another MenuCrafting element with craftingType = CraftingElementType.Output.
-		 */
+		/** Takes the ingredients supplied to a MenuCrafting element and sets the appropriate outcome of another MenuCrafting element with craftingType = CraftingElementType.Output. */
 		public static void CreateRecipe ()
 		{
 			Menu[] allMenus = GetMenus (true).ToArray ();
@@ -2980,7 +2966,7 @@ namespace AC
 				}
 			}
 		}
-		
+
 
 		/**
 		 * <summary>Instantly turns off all Menus.</summary>
@@ -3206,9 +3192,7 @@ namespace AC
 		}
 
 
-		/**
-		 * <summary>Destroys and unregisters all custom Menus registered with PlayerMenus</summary>
-		 */
+		/** Destroys and unregisters all custom Menus registered with PlayerMenus */
 		public void DestroyCustomMenus ()
 		{
 			for (int i=0; i<customMenus.Count; i++)

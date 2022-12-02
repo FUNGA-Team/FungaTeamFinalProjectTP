@@ -117,8 +117,7 @@ namespace AC
 			else
 			{
 				uiButton = _element.uiButton;
-
-				uiSlots = new UISlot[_element.uiSlots.Length];
+				uiSlots = (_element.uiSlots != null) ? new UISlot[_element.uiSlots.Length] : new UISlot[0];
 				for (int i=0; i<uiSlots.Length; i++)
 				{
 					uiSlots[i] = new UISlot (_element.uiSlots[i]);

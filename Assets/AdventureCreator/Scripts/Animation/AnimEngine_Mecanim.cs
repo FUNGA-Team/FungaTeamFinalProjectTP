@@ -169,7 +169,33 @@ namespace AC
 					if (character.GetShapeable ())
 					{
 						character.expressionGroupID = ActionBlendShape.ShapeableGroupGUI ("Expression shape group:", character.GetShapeable ().shapeGroups, character.expressionGroupID);
-						EditorGUILayout.HelpBox ("The names of the expressions below must match the shape key labels.", MessageType.Info);
+
+						bool anyMissing = false;
+						ShapeGroup shapeGroup = character.GetShapeable ().GetGroup (character.expressionGroupID);
+						if (shapeGroup != null)
+						{
+							foreach (Expression expression in character.expressions)
+							{
+								bool keyFound = false;
+								foreach (ShapeKey shapeKey in shapeGroup.shapeKeys)
+								{
+									if (shapeKey.label == expression.label)
+									{
+										keyFound = true;
+									}
+								}
+
+								if (!keyFound)
+								{
+									anyMissing = true;
+								}
+							}
+						}
+
+						if (shapeGroup == null || anyMissing)
+						{
+							EditorGUILayout.HelpBox ("The names of the expressions below must match the shape key labels.", MessageType.Warning);
+						}
 						character.expressionTransitionTime = CustomGUILayout.FloatField ("Transition time (s)", character.expressionTransitionTime, string.Empty, "The time to transition between expressions via shapekey");
 					}
 					else

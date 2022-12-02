@@ -236,7 +236,7 @@ namespace AC
 			{
 				foreach (ScriptData _scriptData in playerData.playerScriptData)
 				{
-					if (_scriptData.data != null && _scriptData.data.Length > 0)
+					if (!string.IsNullOrEmpty (_scriptData.data))
 					{
 						foreach (Remember playerSaveScript in playerSaveScripts)
 						{
@@ -289,7 +289,7 @@ namespace AC
 			{
 				foreach (ScriptData _scriptData in mainData.persistentScriptData)
 				{
-					if (_scriptData.data != null && _scriptData.data.Length > 0)
+					if (!string.IsNullOrEmpty (_scriptData.data))
 					{
 						foreach (Remember remember in persistentSaveScripts)
 						{
@@ -731,7 +731,7 @@ namespace AC
 			HashSet<Remember> saveObjects = ConstantID.GetComponents <Remember> (scene);
 			foreach (ScriptData _scriptData in allScriptData)
 			{
-				if (_scriptData.data != null && _scriptData.data.Length > 0)
+				if (!string.IsNullOrEmpty (_scriptData.data))
 				{
 					foreach (Remember saveObject in saveObjects)
 					{
@@ -884,6 +884,11 @@ namespace AC
 				EditorGUILayout.LabelField ("Remember data:");
 				foreach (ScriptData scriptData in allScriptData)
 				{
+					if (string.IsNullOrEmpty (scriptData.data))
+					{ 
+						Debug.LogWarning ("Invalid Remember data for object ID " + scriptData.objectID + " in scene " + sceneName + ", " + sceneNumber);
+						continue;
+					}
 					RememberData rememberData = SaveSystem.FileFormatHandler.DeserializeObject<RememberData> (scriptData.data);
 					if (rememberData != null)
 					{

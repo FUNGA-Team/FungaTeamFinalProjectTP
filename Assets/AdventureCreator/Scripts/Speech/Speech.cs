@@ -753,6 +753,7 @@ namespace AC
 							else
 							{
 								EndMessage (true);
+								KickStarter.eventManager.Call_OnSkipSpeech (this, false);
 							}
 						}
 					}

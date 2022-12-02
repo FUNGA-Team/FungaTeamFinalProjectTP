@@ -341,9 +341,14 @@ namespace AC
 					{
 						return KickStarter.runtimeInventory.PlayerInvCollection;
 					}
-					if (KickStarter.runtimeInventory.CraftingInvCollection.Contains (this))
+					
+					InvCollection[] craftingInvCollections = KickStarter.runtimeInventory.CraftingInvCollections;
+					foreach (InvCollection craftingInvCollection in craftingInvCollections)
 					{
-						return KickStarter.runtimeInventory.CraftingInvCollection;
+						if (craftingInvCollection.Contains (this))
+						{
+							return craftingInvCollection;
+						}
 					}
 				}
 
@@ -458,7 +463,7 @@ namespace AC
 			{
 				if ((KickStarter.settingsManager.interactionMethod != AC_InteractionMethod.ChooseHotspotThenInteraction || KickStarter.settingsManager.InventoryInteractions == InventoryInteractions.Single) && KickStarter.settingsManager.InventoryDragDrop)
 				{
-					if (KickStarter.settingsManager.dragDropThreshold <= 0f)
+					if (KickStarter.settingsManager.dragThreshold <= 0f)
 					{
 						if (KickStarter.settingsManager.inventoryDropLook)
 						{
@@ -481,7 +486,7 @@ namespace AC
 					}
 				}
 				else if (KickStarter.settingsManager.interactionMethod == AC_InteractionMethod.ChooseHotspotThenInteraction && KickStarter.settingsManager.inventoryInteractions == InventoryInteractions.Multiple && KickStarter.settingsManager.InventoryDragDrop
-					&& KickStarter.settingsManager.dragDropThreshold > 0f && KickStarter.playerInput.GetDragState () != DragState.Inventory && KickStarter.settingsManager.inventoryDropLookNoDrag)
+					&& KickStarter.settingsManager.dragThreshold > 0f && KickStarter.playerInput.GetDragState () != DragState.Inventory && KickStarter.settingsManager.inventoryDropLookNoDrag)
 				{
 					KickStarter.runtimeInventory.ShowInteractions (this);
 					return;
@@ -511,7 +516,7 @@ namespace AC
 
 				for (int i = 0; i < combineInstance.CombineInteractions.Length; i++)
 				{
-					if (combineInstance.CombineInteractions[i].combineID == ItemID && combineInstance.CombineInteractions[i].actionList)
+					if (combineInstance.CombineInteractions[i].combineID == ItemID)
 					{
 						if (KickStarter.settingsManager.inventoryDisableDefined)
 						{
@@ -528,7 +533,7 @@ namespace AC
 					// Try opposite: search selected item instead
 					for (int i = 0; i < CombineInteractions.Length; i++)
 					{
-						if (CombineInteractions[i].combineID == combineInstance.ItemID && CombineInteractions[i].actionList)
+						if (CombineInteractions[i].combineID == combineInstance.ItemID)
 						{
 							if (KickStarter.settingsManager.inventoryDisableDefined)
 							{
@@ -558,8 +563,6 @@ namespace AC
 					AdvGame.RunActionListAsset (KickStarter.inventoryManager.unhandledCombine);
 				}
 			}
-
-			KickStarter.playerCursor.ResetSelectedCursor ();
 		}
 
 

@@ -1661,7 +1661,7 @@ namespace AC
 
 		// Camera
 
-		/** A delegate for the Delegate_OnSwitchCamera events */
+		/** A delegate for the OnSwitchCamera event */
 		public delegate void Delegate_OnSwitchCamera (_Camera fromCamera, _Camera toCamera, float transitionTime);
 		/** A delegate for the Delegate_OnShakeCamera events */
 		public delegate void Delegate_OnShakeCamera (float intensity, float duration);
@@ -1671,7 +1671,17 @@ namespace AC
 		public static event Delegate_OnShakeCamera OnShakeCamera;
 		/** An event triggered whenever the MainCamera updates its internal record of the playable screen area, due to the aspect ratio or screen size changing */
 		public static event Delegate_Generic OnUpdatePlayableScreenArea;
-		
+
+		/** A delegate for the OnCameraSplitScreenStart event */
+		public delegate void Delegate_OnCameraSplitScreenStart (_Camera camera, CameraSplitOrientation splitOrientation, float splitAmountMain, float splitAmountOther, bool isTopLeftSplit);
+		/** An event triggered when the split-screen effect begins */
+		public static event Delegate_OnCameraSplitScreenStart OnCameraSplitScreenStart;
+		/** A delegate for the OnCameraSplitScreenStop event */
+		public delegate void Delegate_OnCameraSplitScreenStop (_Camera camera);
+		/** An event triggered when the split-screen effect ends */
+		public static event Delegate_OnCameraSplitScreenStop OnCameraSplitScreenStop;
+
+
 		/**
 		 * <summary>Triggers the OnSwitchCamera event.</summary>
 		 * <param name = "dragBase">The object being picked up</param>
@@ -1699,6 +1709,7 @@ namespace AC
 		}
 
 
+		/** Triggers the OnUpdatePlayableScreenArea event */
 		public void Call_OnUpdatePlayableScreenArea ()
 		{
 			if (OnUpdatePlayableScreenArea != null)
@@ -1707,6 +1718,35 @@ namespace AC
 			}
 		}
 
+
+		/** 
+		 * <summary>Triggers the OnCameraSplitScreenStart event</summary>
+		 * <param name = "camera">The camera used in the effect</param>
+		 * <param name = "splitOrientation">The orientation of the effect (Horizontal, Vertical)</param>
+		 * <param name = "splitAmountMain">The proportion of the screen used by the MainCamera</param>
+		 * <param name = "splitAmountOther">The proportion of the screen used by the other camera</param>
+		 * <param name = "isTopLeftSplit">If True, the MainCamera will be attached to the top or left camera (depending on the orientation)</param>
+		 */
+		public void Call_OnCameraSplitScreenStart (_Camera camera, CameraSplitOrientation splitOrientation, float splitAmountMain, float splitAmountOther, bool isTopLeftSplit)
+		{
+			if (OnCameraSplitScreenStart != null && camera)
+			{
+				OnCameraSplitScreenStart (camera, splitOrientation, splitAmountMain, splitAmountOther, isTopLeftSplit);
+			}
+		}
+
+
+		/** 
+		 * <summary>Triggers the OnCameraSplitScreenStop event</summary>
+		 * <param name = "splitCamera">The camera used in the effect that was not used by the MainCamera</param>
+		 */
+		public void Call_OnCameraSplitScreenStop (_Camera splitCamera)
+		{
+			if (OnCameraSplitScreenStop != null && splitCamera != null)
+			{
+				OnCameraSplitScreenStop (splitCamera);
+			}
+		}
 
 		// Options
 

@@ -66,6 +66,21 @@ namespace AC
 		}
 
 
+		public static int LongestDimension
+		{
+			get
+			{
+				#if UNITY_EDITOR
+				if (!Application.isPlaying) return Screen.height > Screen.width ? Screen.height : Screen.width;
+				if (cachedHeight == 0) UpdateCache ();
+				return cachedHeight > cachedWidth ? cachedHeight : cachedWidth;
+				#else
+				return Screen.height > Screen.width ? Screen.height : Screen.width;
+				#endif
+			}
+		}
+
+
 		#if UNITY_EDITOR
 
 		public static void UpdateCache ()

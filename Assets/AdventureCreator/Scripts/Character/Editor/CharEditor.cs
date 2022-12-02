@@ -66,6 +66,7 @@ namespace AC
 			if (_target.IsPlayer && AdvGame.GetReferences ().settingsManager != null && AdvGame.GetReferences ().settingsManager.PlayerCanReverse ())
 			{
 				_target.reverseSpeedFactor = CustomGUILayout.Slider ("Reverse speed factor:", _target.reverseSpeedFactor, 0f, 1f, "", "The factor by which speed is reduced when reversing");
+				_target.canRunInReverse = CustomGUILayout.Toggle ("Can run in reverse?", _target.canRunInReverse, "", "If True, the Player can run backwards");
 			}
 
 			CustomGUILayout.EndVertical ();
@@ -158,6 +159,7 @@ namespace AC
 
 			_target.speechColor = CustomGUILayout.ColorField ("Speech text colour:", _target.speechColor, "", "");
 			_target.speechLabel = CustomGUILayout.TextField ("Speaker label:", _target.speechLabel, "", "");
+			if (_target.lineID > 0) EditorGUILayout.LabelField ("Speech Manager ID:", _target.lineID.ToString ());
 			_target.speechMenuPlacement = (Transform) CustomGUILayout.ObjectField <Transform> ("Speech menu placement child:", _target.speechMenuPlacement, true, "", "The Transform at which to place Menus set to appear 'Above Speaking Character'. If this is not set, the placement will be set automatically");
 
 			if (_target.useExpressions)
@@ -173,8 +175,6 @@ namespace AC
 			_target.useExpressions = CustomGUILayout.Toggle ("Use expressions?", _target.useExpressions, "", "If True, speech text can use expression tokens to change the character's expression");
 			if (_target.useExpressions)
 			{
-				_target.GetAnimEngine ().CharExpressionsGUI ();
-
 				EditorGUILayout.Space ();
 				CustomGUILayout.BeginVertical ();
 				for (int i=0; i<_target.expressions.Count; i++)
@@ -182,7 +182,7 @@ namespace AC
 					EditorGUILayout.BeginHorizontal ();
 					EditorGUILayout.LabelField ("Expression #" + _target.expressions[i].ID.ToString (), EditorStyles.boldLabel);
 
-					if (GUILayout.Button ("", CustomStyles.IconCog))
+					if (GUILayout.Button (string.Empty, CustomStyles.IconCog))
 					{
 						ExpressionSideMenu (_target, i);
 					}
@@ -200,9 +200,32 @@ namespace AC
 				{
 					GUILayout.Label ("Current expression:" + _target.CurrentExpression.label, EditorStyles.miniLabel);
 				}
+
+				EditorGUILayout.Space ();
+				_target.GetAnimEngine ().CharExpressionsGUI ();
 			}
 
+			EditorGUILayout.HelpBox ("The following tokens are available to place in this character's speech text:" + GetTokensList (_target), MessageType.Info);
+
 			CustomGUILayout.EndVertical ();
+		}
+
+
+		private string GetTokensList (AC.Char _target)
+		{
+			string result = "\n  [wait]\n  [wait:X]\n  [hold]\n  [continue]\n  [speaker]\n  [line:ID]\n  [token:ID]";
+			if (_target.useExpressions)
+			{
+				result += "\n  [expression:none]";
+				for (int i=0; i < _target.expressions.Count; i++)
+				{
+					if (!string.IsNullOrEmpty (_target.expressions[i].label))
+					{
+						result += "\n  [expression:" + _target.expressions[i].label + "]";
+					}
+				}
+			}
+			return result;
 		}
 
 

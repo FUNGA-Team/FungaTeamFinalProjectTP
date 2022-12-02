@@ -10,6 +10,9 @@
  */
 
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace AC
 {
@@ -68,12 +71,12 @@ namespace AC
 			{
 				if (linkedVariable.link != VarLink.CustomScript)
 				{
-					ACDebug.LogWarning ("The component variable " + sharedVariableName + " must have its 'Link to' field set to 'Custom Script' in order to link it to an Animator");
+					ACDebug.LogWarning ("The component variable '" + sharedVariableName + "' must have its 'Link to' field set to 'Custom Script' in order to link it to an Animator");
 				}
 			}
 			else
 			{
-				ACDebug.LogWarning ("Variable " + sharedVariableName + " was not found for Link Variable To Animator on " + gameObject, this);
+				ACDebug.LogWarning ("Variable '" + sharedVariableName + "' was not found for Link Variable To Animator on " + gameObject, this);
 				return;
 			}
 
@@ -89,6 +92,38 @@ namespace AC
 		}
 
 		#endregion
+
+
+		#if UNITY_EDITOR
+
+		public void ShowGUI ()
+		{
+			sharedVariableName = EditorGUILayout.DelayedTextField ("Shared Variable name:", sharedVariableName);
+			variables = (Variables) EditorGUILayout.ObjectField ("Variables:", variables, typeof (Variables), true);
+			_animator = (Animator) EditorGUILayout.ObjectField ("Animator:", _animator, typeof (Animator), true);
+
+			if (!string.IsNullOrEmpty (sharedVariableName))
+			{
+				Variables _variables = variables ? variables : GetComponent<Variables> ();
+				if (_variables)
+				{
+					GVar linkedVariable = _variables.GetVariable (sharedVariableName);
+					if (linkedVariable != null)
+					{
+						if (linkedVariable.link != VarLink.CustomScript)
+						{
+							EditorGUILayout.HelpBox ("The component variable '" + sharedVariableName + "' must have its 'Link to' field set to 'Custom Script' in order to link it to an Animator", MessageType.Warning);
+						}
+					}
+					else
+					{
+						EditorGUILayout.HelpBox ("Variable '" + sharedVariableName + "' was not found for Link Variable To Animator on " + gameObject, MessageType.Warning);
+					}
+				}
+			}
+		}
+
+		#endif
 
 
 		#region PrivateFunctions

@@ -743,7 +743,7 @@ namespace AC
 
 			foreach (Action action in actions)
 			{
-				if (action && action is IItemReferencerAction)
+				if (action != null && action is IItemReferencerAction)
 				{
 					IItemReferencerAction itemReferencerAction = action as IItemReferencerAction;
 					int thisNumReferences = itemReferencerAction.GetNumItemReferences (itemID, DefaultParameters);
@@ -773,7 +773,7 @@ namespace AC
 
 			foreach (Action action in actions)
 			{
-				if (action && action is IItemReferencerAction)
+				if (action != null && action is IItemReferencerAction)
 				{
 					IItemReferencerAction itemReferencerAction = action as IItemReferencerAction;
 					int thisNumReferences = itemReferencerAction.UpdateItemReferences (oldItemID, newItemID, DefaultParameters);
@@ -794,7 +794,7 @@ namespace AC
 
 			foreach (Action action in actions)
 			{
-				if (action && action is IMenuReferencer)
+				if (action != null && action is IMenuReferencer)
 				{
 					IMenuReferencer menuReferencer = action as IMenuReferencer;
 					int thisNumReferences = menuReferencer.GetNumMenuReferences (menuName, elementName);
@@ -832,7 +832,7 @@ namespace AC
 
 				foreach (Action action in actions)
 				{
-					if (action && action is IVariableReferencerAction)
+					if (action != null && action is IVariableReferencerAction)
 					{
 						IVariableReferencerAction variableReferencerAction = action as IVariableReferencerAction;
 						int thisNumReferences = variableReferencerAction.GetNumVariableReferences (variableLocation, variableID, DefaultParameters, _variables, _variablesConstantID);
@@ -871,7 +871,7 @@ namespace AC
 
 				foreach (Action action in actions)
 				{
-					if (action && action is IVariableReferencerAction)
+					if (action != null && action is IVariableReferencerAction)
 					{
 						IVariableReferencerAction variableReferencerAction = action as IVariableReferencerAction;
 						int thisNumReferences = variableReferencerAction.UpdateVariableReferences (variableLocation, oldVariableID, newVariableID, DefaultParameters, _variables, _variablesConstantID);
@@ -903,7 +903,7 @@ namespace AC
 
 			foreach (Action action in actions)
 			{
-				if (action && action is IDocumentReferencerAction)
+				if (action != null && action is IDocumentReferencerAction)
 				{
 					IDocumentReferencerAction documentReferencerAction = action as IDocumentReferencerAction;
 					int thisNumReferences = documentReferencerAction.GetNumDocumentReferences (documentID, DefaultParameters);
@@ -934,7 +934,7 @@ namespace AC
 
 			foreach (Action action in actions)
 			{
-				if (action && action is IDocumentReferencerAction)
+				if (action != null && action is IDocumentReferencerAction)
 				{
 					IDocumentReferencerAction documentReferencerAction = action as IDocumentReferencerAction;
 					int thisNumReferences = documentReferencerAction.UpdateDocumentReferences (oldDocumentID, newDocumentID, DefaultParameters);
@@ -956,7 +956,7 @@ namespace AC
 
 			foreach (Action action in actions)
 			{
-				if (action && action is IObjectiveReferencerAction)
+				if (action != null && action is IObjectiveReferencerAction)
 				{
 					IObjectiveReferencerAction documentReferencerAction = action as IObjectiveReferencerAction;
 					int thisNumReferences = documentReferencerAction.GetNumObjectiveReferences (objectiveID);
@@ -978,7 +978,7 @@ namespace AC
 
 			foreach (Action action in actions)
 			{
-				if (action && action is IObjectiveReferencerAction)
+				if (action != null && action is IObjectiveReferencerAction)
 				{
 					IObjectiveReferencerAction documentReferencerAction = action as IObjectiveReferencerAction;
 					int thisNumReferences = documentReferencerAction.UpdateObjectiveReferences (oldObjectiveID, newObjectiveID);

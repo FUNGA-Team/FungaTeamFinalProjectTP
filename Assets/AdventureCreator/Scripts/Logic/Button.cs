@@ -15,9 +15,7 @@ using UnityEngine;
 namespace AC
 {
 
-	/**
-	 * A data container for Hotspot interactions.
-	 */
+	/**  A data container for Hotspot interactions. */
 	[System.Serializable]
 	public class Button
 	{
@@ -45,6 +43,9 @@ namespace AC
 
 		/** What the Player prefab does after clicking the Hotspot, but before the Interaction itself is run (DoNothing, TurnToFace, WalkTo, WalkToMarker) */
 		public PlayerAction playerAction = PlayerAction.DoNothing;
+
+		/** If True, and playerAction = PlayerAction.WalkToMarker, and the Hotspot's doubleClickingHotspot = DoubleClickingHotspot.TriggersInteractionInstantly, then the Player will snap to the Hotspot's Walk-to Marker when the Interaction is run through double-clicking */
+		public bool doubleClickDoesNotSnapPlayerToMarker = false;
 
 		/** If True, and playerAction = PlayerAction.WalkTo, then the Interaction will be run once the Player is within a certain distance of the Hotspot */
 		public bool setProximity = false;

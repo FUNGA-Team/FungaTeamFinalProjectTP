@@ -41,7 +41,12 @@ namespace AC
 		 */
 		public static void SetMixerVolume (AudioMixerGroup audioMixerGroup, string parameter, float volume)
 		{
-			if (audioMixerGroup && KickStarter.settingsManager.volumeControl == VolumeControl.AudioMixerGroups)
+			if (string.IsNullOrEmpty (parameter) || audioMixerGroup == null)
+			{
+				return;
+			}
+
+			if (KickStarter.settingsManager.volumeControl == VolumeControl.AudioMixerGroups)
 			{
 				float attenuation = (volume > 0f) ? (Mathf.Log10 (volume) * 20f) : -80f;
 				audioMixerGroup.audioMixer.SetFloat (parameter, attenuation);

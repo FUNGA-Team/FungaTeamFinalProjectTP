@@ -51,8 +51,8 @@ namespace AC
 		#region PublicFunctions
 
 		public override Playable CreateTrackMixer (PlayableGraph graph, GameObject go, int inputCount)
-	    {
-	    	foreach (TimelineClip timelineClip in GetClips ())
+		{
+			foreach (TimelineClip timelineClip in GetClips ())
 			{
 				SpeechPlayableClip clip = (SpeechPlayableClip) timelineClip.asset;
 				timelineClip.displayName = clip.GetDisplayName ();

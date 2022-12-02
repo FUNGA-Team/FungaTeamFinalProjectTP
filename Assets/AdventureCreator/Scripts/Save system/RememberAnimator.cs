@@ -31,16 +31,23 @@ namespace AC
 	public class RememberAnimator : Remember
 	{
 
+		#region Variables
+
 		[SerializeField] private bool saveController = false; 
 		[SerializeField] private bool setDefaultParameterValues = false;
 		[SerializeField] private List<DefaultAnimParameter> defaultAnimParameters = new List<DefaultAnimParameter>();
 
 		private Animator _animator;
-		private bool loadedData = false;
-		
-		
-		private void Awake ()
+
+		#endregion
+
+
+		#region UnityStandards
+
+		protected override void Start ()
 		{
+			base.Start ();
+
 			if (loadedData) return;
 
 			if (GameIsPlaying () && setDefaultParameterValues && isActiveAndEnabled)
@@ -69,8 +76,12 @@ namespace AC
 				}
 			}
 		}
-		
-		
+
+		#endregion
+
+
+		#region PublicFunctions
+
 		public override string SaveData ()
 		{
 			AnimatorData animatorData = new AnimatorData ();
@@ -95,7 +106,6 @@ namespace AC
 			AnimatorData data = Serializer.LoadScriptData <AnimatorData> (stringData);
 			if (data == null)
 			{
-				loadedData = false;
 				return;
 			}
 			SavePrevented = data.savePrevented; if (savePrevented) return;
@@ -124,6 +134,8 @@ namespace AC
 			StringToLayerWeights (data.layerWeightData);
 			StringToStates (data.stateData);
 		}
+
+		#endregion
 
 
 		#if AddressableIsPresent
@@ -212,6 +224,8 @@ namespace AC
 
 		#endif
 
+
+		#region PrivateFunctions
 		
 		private StringBuilder ParameterValuesToString (AnimatorControllerParameter[] parameters)
 		{
@@ -402,6 +416,10 @@ namespace AC
 			}
 		}
 
+		#endregion
+
+
+		#region GetSet
 
 		private Animator Animator
 		{
@@ -415,6 +433,10 @@ namespace AC
 			}
 		}
 
+		#endregion
+
+
+		#region PrivateStructs
 
 		[System.Serializable]
 		private struct DefaultAnimParameter
@@ -439,8 +461,10 @@ namespace AC
 
 		}
 
+		#endregion
+
 	}
-	
+
 
 	/** A data container used by the RememberAnimator script. */
 	[System.Serializable]

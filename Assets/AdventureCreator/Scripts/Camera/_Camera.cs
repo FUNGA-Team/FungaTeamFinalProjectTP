@@ -132,9 +132,7 @@ namespace AC
 		{}
 
 
-		/**
-		 * Auto-assigns "target" as the Player prefab Transform if targetIsPlayer = True.
-		 */
+		/** Auto-assigns "target" as the Player prefab Transform if targetIsPlayer = True. */
 		public virtual void ResetTarget ()
 		{
 			if (targetIsPlayer && KickStarter.player)
@@ -144,17 +142,13 @@ namespace AC
 		}
 
 
-		/**
-		 * Moves the camera instantly to its destination.
-		 */
+		/** Moves the camera instantly to its destination. */
 		public virtual void MoveCameraInstant ()
 		{ }
 
 
 
-		/**
-		 * Enables the camera for split-screen, using the MainCamera as the "main" part of the split, with all the data.
-		 */
+		/** Enables the camera for split-screen, using the MainCamera as the "main" part of the split, with all the data. */
 		public void SetSplitScreen ()
 		{
 			Camera.enabled = true;
@@ -162,9 +156,7 @@ namespace AC
 		}
 
 
-		/**
-		 * Removes the split-screen effect on this camera.
-		 */
+		/** Removes the split-screen effect on this camera. */
 		public void RemoveSplitScreen ()
 		{
 			if (Camera.enabled)

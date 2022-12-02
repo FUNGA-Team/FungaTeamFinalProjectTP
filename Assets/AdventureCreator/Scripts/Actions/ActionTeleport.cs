@@ -49,6 +49,8 @@ namespace AC
 
 		public bool recalculateActivePathFind = false;
 		public bool isPlayer;
+		public int playerID = -1;
+		public int playerParameterID = -1;
 		public bool snapCamera;
 
 		public bool copyRotation;
@@ -72,9 +74,11 @@ namespace AC
 
 			relativeVector = AssignVector3 (parameters, relativeVectorParameterID, relativeVector);
 
-			if (isPlayer && KickStarter.player)
+			if (isPlayer)
 			{
-				runtimeObToMove = KickStarter.player.gameObject;
+				Player _player = AssignPlayer (playerID, parameters, playerParameterID);
+				if (_player) runtimeObToMove = _player.gameObject;
+				else runtimeObToMove = null;
 			}
 
 			runtimeVariable = null;
@@ -230,7 +234,16 @@ namespace AC
 		public override void ShowGUI (List<ActionParameter> parameters)
 		{
 			isPlayer = EditorGUILayout.Toggle ("Is Player?", isPlayer);
-			if (!isPlayer)
+			if (isPlayer)
+			{
+				if (KickStarter.settingsManager != null && KickStarter.settingsManager.playerSwitching == PlayerSwitching.Allow)
+				{
+					playerParameterID = ChooseParameterGUI ("Player ID:", parameters, playerParameterID, ParameterType.Integer);
+					if (playerParameterID < 0)
+						playerID = ChoosePlayerGUI (playerID, true);
+				}
+			}
+			else
 			{
 				obToMoveParameterID = Action.ChooseParameterGUI ("Object to move:", parameters, obToMoveParameterID, ParameterType.GameObject);
 				if (obToMoveParameterID >= 0)

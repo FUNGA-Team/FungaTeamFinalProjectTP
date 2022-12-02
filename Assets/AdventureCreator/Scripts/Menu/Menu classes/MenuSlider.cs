@@ -60,6 +60,12 @@ namespace AC
 		/** The method by which this element is hidden from view when made invisible (DisableObject, DisableInteractability) */
 		public UISelectableHideStyle uiSelectableHideStyle = UISelectableHideStyle.DisableObject;
 
+		#if TextMeshProIsPresent
+		private TMPro.TextMeshProUGUI uiText;
+		#else
+		private Text uiText;
+		#endif
+
 		private float visualAmount;
 		private string fullText;
 
@@ -67,6 +73,7 @@ namespace AC
 		public override void Declare ()
 		{
 			uiSlider = null;
+			uiText = null;
 
 			label = "Slider";
 			isVisible = true;
@@ -112,6 +119,7 @@ namespace AC
 				uiSlider = _element.uiSlider;
 			}
 
+			uiText = null;
 			label = _element.label;
 			isClickable = _element.isClickable;
 			textEffects = _element.textEffects;
@@ -140,6 +148,12 @@ namespace AC
 			uiSlider = LinkUIElement <Slider> (canvas);
 			if (uiSlider)
 			{
+				#if TextMeshProIsPresent
+				uiText = uiSlider.GetComponentInChildren <TMPro.TextMeshProUGUI>();
+				#else
+				uiText = uiSlider.GetComponentInChildren <Text>();
+				#endif
+
 				uiSlider.interactable = isClickable;
 				if (isClickable)
 				{
@@ -195,11 +209,7 @@ namespace AC
 			CustomGUILayout.BeginVertical ();
 
 			sliderType = (AC_SliderType) CustomGUILayout.EnumPopup ("Slider affects:", sliderType, apiPrefix + ".sliderType", "What the slider's value represents");
-
-			if (source == MenuSource.AdventureCreator)
-			{
-				label = CustomGUILayout.TextField ("Label text:", label, apiPrefix + ".label", "The text that's displayed on-screen");
-			}
+			label = CustomGUILayout.TextField ("Label text:", label, apiPrefix + ".label", "The text that's displayed on-screen");
 
 			if (sliderType == AC_SliderType.CustomScript)
 			{
@@ -375,6 +385,10 @@ namespace AC
 			{
 				return 0;
 			}
+			if (uiText && uiText.gameObject == gameObject)
+			{
+				return 0;
+			}
 			return base.GetSlotIndex (gameObject);
 		}
 
@@ -393,6 +407,10 @@ namespace AC
 
 			if (uiSlider)
 			{
+				if (uiText)
+				{
+					uiText.text = fullText;
+				}
 				uiSlider.value = visualAmount;
 				UpdateUISelectable (uiSlider, uiSelectableHideStyle);
 			}

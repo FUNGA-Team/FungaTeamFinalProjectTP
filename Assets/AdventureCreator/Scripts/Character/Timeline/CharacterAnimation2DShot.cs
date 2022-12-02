@@ -20,7 +20,7 @@ using UnityEditor;
 namespace AC
 {
 
-	public class CharacterAnimation2DShot : PlayableAsset
+	public class CharacterAnimation2DShot : CharacterAnimationShot
 	{
 
 		#region Variables

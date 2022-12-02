@@ -472,6 +472,7 @@ namespace AC
 			newAction.invAction = InvAction.Add;
 			newAction.invID = itemID;
 			newAction.addToFront = addToFront;
+			newAction.setAmount = amountToAdd > 1;
 			newAction.amount = amountToAdd;
 			newAction.playerID = playerID;
 			return newAction;
@@ -511,6 +512,7 @@ namespace AC
 			newAction.invAction = InvAction.Replace;
 			newAction.invID = itemIDToAdd;
 			newAction.invIDReplace = itemIDToRemove;
+			newAction.setAmount = amountToAdd > 1;
 			newAction.amount = amountToAdd;
 			return newAction;
 		}

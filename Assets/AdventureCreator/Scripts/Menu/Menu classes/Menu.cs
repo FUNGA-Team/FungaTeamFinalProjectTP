@@ -1449,7 +1449,7 @@ namespace AC
 			{
 				Rect rectRelative = _element.GetSlotRectRelative (slot);
 				Rect rectAbsolute = GetRectAbsolute (rectRelative);
-				return (rectAbsolute.Contains (_point));
+				return rectAbsolute.Contains (_point);
 			}
 			else if (RuntimeCanvas)
 			{
@@ -1472,6 +1472,33 @@ namespace AC
 				}
 			}
 			return false;
+		}
+
+
+		/**
+		 * <summary>Gets a Rect describing the boundary (in screen-space) of an element in the Menu</summary>
+		 * <param name = "_element">The Element to get the boundary of</param>
+		 * <param name = "slot">The Element's slot, if it supports multiple slots</param>
+		 * <returns>A Rect describing the Element's boundary in screen-space</returns>
+		 */
+		public Rect GetElementRect (MenuElement _element, int slot)
+		{
+			if (menuSource == MenuSource.AdventureCreator)
+			{
+				Rect rectRelative = _element.GetSlotRectRelative (slot);
+				Rect rectAbsolute = GetRectAbsolute (rectRelative);
+
+				Vector2 invertedCentre = new Vector2 (rectAbsolute.center.x, Screen.height - rectAbsolute.center.y);
+				Rect invertedRect = new Rect (invertedCentre, rectAbsolute.size);
+				return invertedRect;
+			}
+			else if (RuntimeCanvas)
+			{
+				RectTransform slotRectTransform = _element.GetRectTransform (slot);
+				Vector2 size = Vector2.Scale (slotRectTransform.rect.size, slotRectTransform.lossyScale);
+				return new Rect ((Vector2) slotRectTransform.position - (size * 0.5f), size);
+			}
+			return new Rect ();
 		}
 
 

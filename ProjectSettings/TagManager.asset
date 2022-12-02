@@ -9,7 +9,7 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Hotspots
   - Water
   - UI
   - 
@@ -39,6 +39,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Hotspots
+    uniqueID: 6160193
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

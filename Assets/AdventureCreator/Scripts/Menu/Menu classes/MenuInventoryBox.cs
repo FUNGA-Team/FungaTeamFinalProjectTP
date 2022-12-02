@@ -463,7 +463,7 @@ namespace AC
 
 			}
 
-			if (source == MenuSource.AdventureCreator && KickStarter.settingsManager && KickStarter.settingsManager.canReorderItems && highlightTexture)
+			if (source == MenuSource.AdventureCreator && ((KickStarter.settingsManager && KickStarter.settingsManager.canReorderItems) || uiHideStyle == UIHideStyle.ClearContent) && highlightTexture)
 			{
 				highlightEmptySlots = CustomGUILayout.Toggle ("Highlight empty slots?", highlightEmptySlots, apiPrefix + ".highlightEmptySlots", "If True, then the highlight texture will display for empty slots as well as those with items.");
 			}
@@ -1062,7 +1062,7 @@ namespace AC
 				Rect slotRect = GetSlotRectRelative (_slot);
 				Texture2D _tex = emptySlotTexture;
 
-				if (KickStarter.settingsManager && KickStarter.settingsManager.canReorderItems && highlightEmptySlots)
+				if (((KickStarter.settingsManager && KickStarter.settingsManager.canReorderItems) || uiHideStyle == UIHideStyle.ClearContent) && highlightEmptySlots)
 				{
 					if (emptySlotTexture == null)
 					{
@@ -1423,7 +1423,7 @@ namespace AC
 						}
 						else
 						{
-							if (KickStarter.settingsManager.dragDropThreshold > 0f && KickStarter.settingsManager.InventoryDragDrop && KickStarter.settingsManager.inventoryDropLookNoDrag && AllowSelection ())
+							if (KickStarter.settingsManager.dragThreshold > 0f && KickStarter.settingsManager.InventoryDragDrop && KickStarter.settingsManager.inventoryDropLookNoDrag && AllowSelection ())
 							{
 								KickStarter.runtimeInventory.SelectItem (invInstances[trueIndex], SelectItemMode.Use);
 								return true;
@@ -2361,6 +2361,10 @@ namespace AC
 					break;
 
 				default:
+					if (KickStarter.settingsManager.InventoryDragDrop && uiSlots != null && _slot < uiSlots.Length && !uiSlots[_slot].uiButton.IsInteractable ())
+					{
+						return false;
+					}
 					clickConsumed = KickStarter.runtimeInventory.ProcessInventoryBoxClick (_menu, this, _slot, _mouseState);
 					break;
 			}

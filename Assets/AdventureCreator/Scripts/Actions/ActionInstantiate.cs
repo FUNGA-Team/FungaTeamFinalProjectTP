@@ -18,7 +18,6 @@ using UnityEditor;
 #endif
 
 #if AddressableIsPresent
-using System.Collections;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.AddressableAssets;
 #endif
@@ -220,7 +219,11 @@ namespace AC
 			}
 			#endif
 
+			#if AddressableIsPresent
+			if (_gameObject == null && !referenceByAddressable)
+			#else
 			if (_gameObject == null)
+			#endif
 			{
 				return 0f;
 			}
@@ -270,7 +273,7 @@ namespace AC
 
 						KickStarter.sceneChanger.ScheduleForDeletion (replaceGameObject);
 
-						GameObject newObject = Instantiate (_gameObject, position, rotation);
+						GameObject newObject = Object.Instantiate (_gameObject, position, rotation);
 						newObject.name = _gameObject.name;
 						KickStarter.stateHandler.IgnoreNavMeshCollisions ();
 					}
@@ -365,7 +368,7 @@ namespace AC
 				}
 			}
 
-			GameObject newObject = Instantiate (newOb, position, rotation);
+			GameObject newObject = Object.Instantiate (newOb, position, rotation);
 			newObject.name = newOb.name;
 
 			if (newObject.GetComponent<RememberTransform> ())
@@ -402,6 +405,12 @@ namespace AC
 				if (addressableNameParameterID < 0)
 				{
 					addressableName = EditorGUILayout.TextField ("Addressable name:", addressableName);
+				}
+
+				if (gameObject)
+				{
+					Log ("Clearing reference to GameObject '" + gameObject + "' to save memory.");
+					gameObject = null;
 				}
 			}
 			else

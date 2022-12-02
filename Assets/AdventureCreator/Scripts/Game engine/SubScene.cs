@@ -102,6 +102,13 @@ namespace AC
 			{
 				ACDebug.LogError ("The added scene (" + scene.name + ", " + scene.buildIndex + ") overrides the default camera perspective - this feature should not be used in conjunction with multiple-open scenes.", gameObject);
 			}
+
+			if (KickStarter.sceneChanger == null)
+			{
+				ACDebug.LogWarning ("Cannot register " + scene.name + " as a sub-scene - no SceneChanger component was found. Is the main scene an AC scene?", this);
+				return;
+			}
+
 			KickStarter.sceneChanger.RegisterSubScene (this);
 		}
 

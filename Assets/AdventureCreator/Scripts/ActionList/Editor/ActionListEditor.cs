@@ -717,7 +717,18 @@ namespace AC
 					break;
 
 				case "Insert end":
-					AddAction (ActionsManager.GetDefaultAction (), -1, _target);
+					Action insertEndAction = AddAction (ActionsManager.GetDefaultAction (), -1, _target);
+					if (insertEndAction.NumSockets == 1)
+					{
+						if (insertEndAction.endings.Count == 0)
+						{
+							insertEndAction.endings.Add (Action.GenerateStopActionEnd ());
+						}
+						else
+						{
+							insertEndAction.endings[0] = Action.GenerateStopActionEnd ();
+						}
+					}
 					break;
 				
 				case "Insert after":

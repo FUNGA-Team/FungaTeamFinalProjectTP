@@ -558,6 +558,7 @@ MonoBehaviour:
   detectsPlayer: 1
   detectsAllPlayers: 0
   obsToDetect: []
+  canInterruptSelf: 1
   gameObjectParameterID: -1
 --- !u!61 &166805769
 BoxCollider2D:
@@ -657,6 +658,7 @@ MonoBehaviour:
   detectsPlayer: 1
   detectsAllPlayers: 0
   obsToDetect: []
+  canInterruptSelf: 1
   gameObjectParameterID: -1
 --- !u!61 &215554534
 BoxCollider2D:
@@ -1117,74 +1119,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   is2D: 0
---- !u!1 &509872879
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 509872882}
-  - component: {fileID: 509872881}
-  - component: {fileID: 509872880}
-  m_Layer: 0
-  m_Name: EventSystem
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &509872880
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 509872879}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
---- !u!114 &509872881
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 509872879}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_FirstSelected: {fileID: 0}
-  m_sendNavigationEvents: 1
-  m_DragThreshold: 10
---- !u!4 &509872882
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 509872879}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 14
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1284,6 +1218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fadeTexture: {fileID: 2800000, guid: 2de7d16b4ac4b402182d4f2ca40e0b2d, type: 3}
   renderFading: 1
+  renderBorders: 1
   forwardDirection: 0
 --- !u!1 &587368365
 GameObject:
@@ -2973,6 +2908,7 @@ MonoBehaviour:
   detectsPlayer: 1
   detectsAllPlayers: 0
   obsToDetect: []
+  canInterruptSelf: 1
   gameObjectParameterID: -1
 --- !u!61 &2111880999
 BoxCollider2D:
@@ -3078,6 +3014,7 @@ MonoBehaviour:
   limitCursorInfluenceY: {x: 0, y: 0}
   followCursorSpeed: 3
   cursorInfluenceDuringCutscenes: 0
+  cutsceneBehaviour: 0
   lockHorizontal: 0
   lockVertical: 0
   limitHorizontal: 1
@@ -3482,7 +3419,6 @@ MonoBehaviour:
   doubleClickDelay: 1
   dragOverrideInput: 
   directMenuThreshold: 0.05
-  cursorMoveSpeed: 4
   forceGameplayCursor: 0
   activeConversation: {fileID: 0}
   activeArrows: {fileID: 0}
@@ -3929,6 +3865,7 @@ MonoBehaviour:
   detectsPlayer: 1
   detectsAllPlayers: 0
   obsToDetect: []
+  canInterruptSelf: 1
   gameObjectParameterID: -1
 --- !u!114 &8083421562095531714
 MonoBehaviour:

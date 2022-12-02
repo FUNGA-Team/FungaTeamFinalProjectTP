@@ -70,26 +70,41 @@ namespace AC
 		
 		public override float Run ()
 		{
-			if (parentAction == ParentAction.SetParent && runtimeParentTransform)
-			{
-				runtimeObToAffect.transform.parent = runtimeParentTransform;
-				
-				if (setPosition)
-				{
-					runtimeObToAffect.transform.localPosition = newPosition;
-				}
-				
-				if (setRotation)
-				{
-					runtimeObToAffect.transform.localRotation = Quaternion.LookRotation (newRotation);
-				}
+			switch (parentAction)
+			{ 
+				case ParentAction.SetParent:
+					if (runtimeParentTransform)
+					{
+						runtimeObToAffect.transform.parent = runtimeParentTransform;
+
+						if (setPosition)
+						{
+							runtimeObToAffect.transform.localPosition = newPosition;
+						}
+
+						if (setRotation)
+						{
+							runtimeObToAffect.transform.localRotation = Quaternion.LookRotation (newRotation);
+						}
+					}
+					break;
+
+				case ParentAction.ClearParent:
+					if (runtimeObToAffect.transform.parent)
+					{
+						if (runtimeObToAffect.transform.parent.gameObject.IsPersistent ())
+						{
+							runtimeObToAffect.transform.parent = null;
+							UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene (runtimeObToAffect, KickStarter.kickStarter.gameObject.scene);
+						}
+						else
+						{
+							runtimeObToAffect.transform.parent = null;
+						}
+					}
+					break;
 			}
 
-			else if (parentAction == ParentAction.ClearParent)
-			{
-				runtimeObToAffect.transform.parent = null;
-			}
-			
 			return 0f;
 		}
 		

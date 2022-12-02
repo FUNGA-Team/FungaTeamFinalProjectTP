@@ -66,7 +66,11 @@ namespace AC
 		/** The translation ID of the 'off' text, as set within SpeechManager */
 		public int offTextLineID = -1;
 
+		#if TextMeshProIsPresent
+		private TMPro.TextMeshProUGUI uiText;
+		#else
 		private Text uiText;
+		#endif
 		private string fullText;
 
 
@@ -149,7 +153,11 @@ namespace AC
 			uiToggle = LinkUIElement <Toggle> (canvas);
 			if (uiToggle)
 			{
+				#if TextMeshProIsPresent
+				uiText = uiToggle.GetComponentInChildren <TMPro.TextMeshProUGUI>();
+				#else
 				uiText = uiToggle.GetComponentInChildren <Text>();
+				#endif
 
 				uiToggle.interactable = isClickable;
 				if (isClickable)

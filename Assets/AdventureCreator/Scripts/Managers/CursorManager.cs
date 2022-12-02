@@ -87,6 +87,8 @@ namespace AC
 		public CursorIconBase walkIcon = new CursorIcon ();
 		/** The cursor when hovering over a Hotspot */
 		public CursorIconBase mouseOverIcon = new CursorIcon ();
+		/** The cursor while the cursor is being used to manipulate a drag-controlled camera */
+		public CursorIconBase cameraDragIcon = new CursorIcon ();
 
 		/** What happens to the cursor when an inventory item is selected (ChangeCursor, ChangeHotspotLabel, ChangeCursorAndHotspotLabel) */
 		public InventoryHandling inventoryHandling = InventoryHandling.ChangeCursor;
@@ -137,6 +139,7 @@ namespace AC
 		private bool showInventoryCursor = true;
 		private bool showInteractionIcons = true;
 		private bool showCutsceneCursor = true;
+		private bool showCameraDragCursor = true;
 		#endif
 
 		private SettingsManager settingsManager;
@@ -311,6 +314,10 @@ namespace AC
 						onlyShowCursorLabelOverHotspots = CustomGUILayout.ToggleLeft ("Only show label when over Hotspots and Inventory?", onlyShowCursorLabelOverHotspots, "AC.KickStarter.cursorManager.onlyShowCursorLabelOverHotspots", "If True, then Hotspot labels will not show when no inventory item is selected unless the cursor is over another inventory item or a Hotspot");
 					}
 				}
+				if (settingsManager && settingsManager.interactionMethod == AC_InteractionMethod.ChooseHotspotThenInteraction)
+				{
+					allowInteractionCursor = CustomGUILayout.ToggleLeft ("Change cursor when over single-use Interaction Hotspots?", allowInteractionCursor, "AC.KickStarter.cursorManager.allowInteractionCursor", "If True, then the cursor will be controlled by the current Interaction when hovering over a Hotspot");
+				}
 
 				if ((settingsManager && settingsManager.interactionMethod == AC_InteractionMethod.ContextSensitive && lookUseCursorAction == LookUseCursorAction.RightClickCyclesModes) ||
 					(settingsManager && settingsManager.interactionMethod == AC_InteractionMethod.ChooseInteractionThenHotspot && settingsManager.inventoryInteractions == InventoryInteractions.Multiple) ||
@@ -337,6 +344,15 @@ namespace AC
 			if (showCutsceneCursor)
 			{
 				IconBaseGUI (string.Empty, waitIcon, "AC.KickStarter.cursorManager.waitIcon", "The cursor while the game is running a gameplay-blocking cutscene");
+			}
+			CustomGUILayout.EndVertical ();
+
+			EditorGUILayout.Space ();
+			EditorGUILayout.BeginVertical (CustomStyles.thinBox);
+			showCameraDragCursor = CustomGUILayout.ToggleHeader (showCameraDragCursor, "Camera-drag cursor");
+			if (showCameraDragCursor)
+			{
+				IconBaseGUI (string.Empty, cameraDragIcon, "AC.KickStarter.cursorManager.cameraDragIcon", "The cursor to show while dragging the camera");
 			}
 			CustomGUILayout.EndVertical ();
 

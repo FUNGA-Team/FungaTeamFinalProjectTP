@@ -249,7 +249,7 @@ namespace AC
 		/**
 		 * <summary>Creates a new instance of the 'Player: Teleport inactive' Action</summary>
 		 * <param name = "playerID">The ID number of the Player to teleport</param>
-		 * <param name = "newTransform">The new Transform for the Player to take</param>
+		 * <param name = "newPlayerStart">The new PlayerStart for the Player to take</param>
 		 * <param name = "newCamera">If set, the camera that will be active when the Player is next switched to</param>
 		 * <returns>The generated Action</returns>
 		 */
@@ -257,6 +257,25 @@ namespace AC
 		{
 			ActionPlayerTeleportInactive newAction = CreateNew<ActionPlayerTeleportInactive> ();
 			newAction.playerID = playerID;
+			newAction.teleportPlayerStartMethod = TeleportPlayerStartMethod.EnteredHere;
+			newAction.newTransform = newPlayerStart;
+			return newAction;
+		}
+
+
+		/**
+		 * <summary>Creates a new instance of the 'Player: Teleport inactive' Action</summary>
+		 * <param name = "playerID">The ID number of the Player to teleport</param>
+		 * <param name = "teleportPlayerStartMethod">The method by which to assign which PlayerStart the Player appears at</param>
+		 * <param name = "newPlayerStart">The new PlayerStart for the Player to take, if teleportPlayerStartMethod = TeleportPlayerStartMethod.EnteredHere</param>
+		 * <param name = "newCamera">If set, the camera that will be active when the Player is next switched to</param>
+		 * <returns>The generated Action</returns>
+		 */
+		public static ActionPlayerTeleportInactive CreateNew (int playerID, TeleportPlayerStartMethod teleportPlayerStartMethod, PlayerStart newPlayerStart = null, _Camera newCamera = null)
+		{
+			ActionPlayerTeleportInactive newAction = CreateNew<ActionPlayerTeleportInactive> ();
+			newAction.playerID = playerID;
+			newAction.teleportPlayerStartMethod = teleportPlayerStartMethod;
 			newAction.newTransform = newPlayerStart;
 			return newAction;
 		}

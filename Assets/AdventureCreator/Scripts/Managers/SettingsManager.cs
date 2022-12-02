@@ -115,6 +115,8 @@ namespace AC
 		public MovementMethod movementMethod = MovementMethod.PointAndClick;
 		/** The main input method used to control the game with (MouseAndKeyboard, KeyboardOrController, TouchScreen) */
 		public InputMethod inputMethod = InputMethod.MouseAndKeyboard;
+		/** The movement speed of a keyboard or controller-controlled cursor */
+		public float simulatedCursorMoveSpeed = 4f;
 		/** How Hotspots are interacted with (ContextSensitive, ChooseInteractionThenHotspot, ChooseHotspotThenInteraction) */
 		public AC_InteractionMethod interactionMethod = AC_InteractionMethod.ContextSensitive;
 		/** How Interactions are triggered, if interactionMethod = AC_InteractionMethod.ChooseHotspotThenInteraction (ClickingMenu, CyclingCursorAndClickingHotspot, CyclingMenuAndClickingHotspot) */
@@ -161,6 +163,8 @@ namespace AC
 		public bool allowGameplayDuringConversations = false;
 		/** If True, then walking to Hotspots without running a particular Interaction will cause the Player to walk to the Hotspot's 'Walk-to Marker' */
 		public bool walkToHotspotMarkers = true;
+		/** The proportion of the screen that the mouse must be dragged for drag effects to kick in */
+		public float dragThreshold = 0f;
 
 		// Inventory settings
 
@@ -168,8 +172,9 @@ namespace AC
 		public bool shareInventory = false;
 		/** If True, then inventory items can be drag-dropped (i.e. used on Hotspots and other items with a single mouse button press */
 		public bool inventoryDragDrop = false;
-		/** The number of pixels the mouse must be dragged for the inventory drag-drop effect becomes active, if inventoryDragDrop = True */
-		public float dragDropThreshold = 0;
+		#if UNITY_EDITOR
+		[SerializeField] private float dragDropThreshold = 0f;
+		#endif
 		/** If True, inventory can be interacted with while a Conversation is active (overridden by allowGameplayDuringConversations) */
 		public bool allowInventoryInteractionsDuringConversations = false;
 		/** If True, then drag-dropping an inventory item on itself will trigger its Examine interaction */
@@ -370,6 +375,10 @@ namespace AC
 		public Texture2D hotspotIconTexture = null;
 		/** The icon to use for Hotspot icons, if hotspotIcon = HotspotIcon.Texture */
 		public CursorIconBase hotspotIconGraphic = new CursorIcon ();
+		/** If set, this material property will be affected by Highlight components instead of the default */
+		public string highlightMaterialPropertyOverride = "";
+		/** If True, then Hotspots will be disabled while the Player is being drag-controlled */
+		public bool disableHotspotsWhileDraggingPlayer = true;
 
 		/** The size of Hotspot icons */
 		public float hotspotIconSize = 0.04f;
@@ -749,6 +758,10 @@ namespace AC
 				{
 					defaultMouseClicks = CustomGUILayout.ToggleLeft ("Mouse clicks have default functionality?", defaultMouseClicks, "AC.KickStarter.settingsManager.defaultMouseClicks", "If True, then left and right mouse clicks will have default behaviour");
 				}
+				else if (inputMethod == InputMethod.KeyboardOrController)
+				{
+					simulatedCursorMoveSpeed = CustomGUILayout.FloatField ("Simulated cursor speed:", simulatedCursorMoveSpeed, "AC.KickStarter.settingsManager.simulatedCursorMoveSpeed", "The movement speed of a keyboard or controller-controlled cursor");
+				}
 				interactionMethod = (AC_InteractionMethod) CustomGUILayout.EnumPopup ("Interaction method:", interactionMethod, "AC.KickStarter.settingsManager.interactionMethod", "How Hotspots are interacted with");
 
 				if (interactionMethod == AC_InteractionMethod.CustomScript)
@@ -889,6 +902,12 @@ namespace AC
 				}
 
 				unityUIClicksAlwaysBlocks = CustomGUILayout.ToggleLeft ("Unity UI blocks interaction and movement?", unityUIClicksAlwaysBlocks, "AC.KickStarter.settingsManager.unityUIClicksAlwaysBlocks", "If True, then movement and interaction clicks will be ignored if the cursor is over a Unity UI element - even those not linked to the Menu Manager");
+				if (dragDropThreshold > 0f && Mathf.Approximately (dragThreshold, 0f))
+				{
+					dragThreshold = dragDropThreshold / 1080f;
+					dragDropThreshold = 0f;
+				}
+				dragThreshold = CustomGUILayout.Slider ("Drag threshold:", dragThreshold, 0f, 0.1f, "AC.KickStarter.settingsManager.dragThreshold", "The proportion of the screen that the mouse must be dragged for drag effects to kick in");
 			}
 			CustomGUILayout.EndVertical ();
 		}
@@ -983,18 +1002,17 @@ namespace AC
 					}
 					if (InventoryDragDrop)
 					{
-						dragDropThreshold = CustomGUILayout.Slider ("Minimum drag distance:", dragDropThreshold, 0f, 20f, "AC.KickStarter.settingsManager.dragDropThreshold", "The number of pixels the mouse must be dragged for the inventory drag-drop effect becomes active");
 						if (inventoryInteractions == AC.InventoryInteractions.Single || interactionMethod == AC_InteractionMethod.ContextSensitive)
 						{
 							inventoryDropLook = CustomGUILayout.ToggleLeft ("Can drop an Item onto itself to Examine it?", inventoryDropLook, "AC.KickStarter.settingsManager.inventoryDropLook", "If True, then using an inventory item on itself will trigger its Examine interaction");
-							if (dragDropThreshold > 0f)
+							if (dragThreshold > 0f)
 							{
 								inventoryDropLookNoDrag = CustomGUILayout.ToggleLeft ("Clicking an Item without dragging Examines it?", inventoryDropLookNoDrag, "AC.KickStarter.settingsManager.inventoryDropLookNoDrag", "If True, then using an inventory item on itself, without first dragging it, will trigger its Examine interaction");
 							}
 						}
 						else if (interactionMethod == AC_InteractionMethod.ChooseHotspotThenInteraction)
 						{
-							if (dragDropThreshold > 0f)
+							if (dragThreshold > 0f)
 							{
 								inventoryDropLookNoDrag = CustomGUILayout.ToggleLeft ("Select item if drag before opening Interaction menu?", inventoryDropLookNoDrag, "AC.KickStarter.settingsManager.inventoryDropLookNoDrag", "If True, then Inventory interaction menus will only be shown when when releasing a click, so that they can be drag-dropped before showing.");
 							}
@@ -1404,6 +1422,12 @@ namespace AC
 				{
 					hideUnhandledHotspots = CustomGUILayout.ToggleLeft ("Hide Hotspots with no suitable interaction?", hideUnhandledHotspots, "AC.KickStarter.settingsManager.hideUnhandledHotspots", "If True, then Hotspots that do not have an interaction for the currently-selected icon will not be visible to the cursor");
 				}
+				if (CanDragPlayer)
+				{
+					disableHotspotsWhileDraggingPlayer = CustomGUILayout.ToggleLeft ("Disable Hotspots while dragging Player?", disableHotspotsWhileDraggingPlayer, "AC.KickStarter.settingsManager.disableHotspotsWhileDraggingPlayer", "");
+				}
+
+				highlightMaterialPropertyOverride = CustomGUILayout.TextField ("Highlight material override:", highlightMaterialPropertyOverride, "AC.KickStarter.settingsManager.highlightMaterialPropertyOverride", "By default, the Highlight component affects the '_Color' property for Materials. The value entered here will override that.");
 			}
 			CustomGUILayout.EndVertical ();
 		}
@@ -1974,6 +1998,10 @@ namespace AC
 		}
 
 
+		/**
+		 * <summary>Gets an array of all defined Player prefabs.</summary>
+		 * <returns>An array of all defined Player prefabs</returns>
+		 */
 		public Player[] GetAllPlayerPrefabs ()
 		{
 			if (playerSwitching == PlayerSwitching.DoNotAllow)
@@ -1988,6 +2016,35 @@ namespace AC
 				if (_player.playerOb)
 				{
 					playersList.Add (_player.playerOb);
+				}
+			}
+
+			return playersList.ToArray ();
+		}
+
+
+		/**
+		 * <summary>Gets an array of all scene instances of the defined Player prefabs</summary>
+		 * <returns>An array of all scene instances of the defined Player prefabs</returns>
+		 */
+		public Player[] GetAllPlayerInstances ()
+		{
+			if (playerSwitching == PlayerSwitching.DoNotAllow)
+			{
+				return new Player[1] { KickStarter.player };
+			}
+
+			List<Player> playersList = new List<Player> ();
+
+			foreach (PlayerPrefab _player in players)
+			{
+				if (_player.playerOb)
+				{
+					Player sceneInstance = _player.GetSceneInstance ();
+					if (sceneInstance)
+					{
+						playersList.Add (sceneInstance);
+					}
 				}
 			}
 
@@ -2295,6 +2352,22 @@ namespace AC
 			set
 			{
 				inventoryDragDrop = value;
+			}
+		}
+
+
+		public bool CanDragPlayer
+		{
+			get
+			{
+				if ((KickStarter.settingsManager.movementMethod == MovementMethod.Drag
+				|| KickStarter.settingsManager.movementMethod == MovementMethod.StraightToCursor
+				|| (KickStarter.settingsManager.movementMethod != MovementMethod.PointAndClick && KickStarter.settingsManager.inputMethod == InputMethod.TouchScreen))
+					&& KickStarter.settingsManager.movementMethod != MovementMethod.None)
+				{
+					return true;
+				}
+				return false;
 			}
 		}
 

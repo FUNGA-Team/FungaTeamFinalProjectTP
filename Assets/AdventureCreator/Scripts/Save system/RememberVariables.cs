@@ -21,8 +21,14 @@ namespace AC
 	public class RememberVariables : Remember
 	{
 
-		private bool loadedData = false;
+		#region Variables
 
+		private Variables variables;
+
+		#endregion
+
+
+		#region PublicFunctions
 
 		public override string SaveData ()
 		{
@@ -44,7 +50,6 @@ namespace AC
 			VariablesData data = Serializer.LoadScriptData <VariablesData> (stringData);
 			if (data == null)
 			{
-				loadedData = false;
 				return;
 			}
 			SavePrevented = data.savePrevented; if (savePrevented) return;
@@ -53,27 +58,18 @@ namespace AC
 
 			foreach (GVar var in Variables.vars)
 			{
-				var.Upload (VariableLocation.Component);
+				var.Upload (VariableLocation.Component, Variables);
 				var.BackupValue ();
 			}
 
 			loadedData = true;
 		}
 
-
-		/**
-		 * Checks if data has been loaded for this component.
-		 */
-		public bool LoadedData
-		{
-			get
-			{
-				return loadedData;
-			}
-		}
+		#endregion
 
 
-		private Variables variables;
+		#region GetSet
+
 		private Variables Variables
 		{
 			get
@@ -86,12 +82,12 @@ namespace AC
 			}
 		}
 
+		#endregion
+
 	}
 
 
-	/**
-	 * A data container used by the RememberVariables script.
-	 */
+	/** A data container used by the RememberVariables script. */
 	[System.Serializable]
 	public class VariablesData : RememberData
 	{

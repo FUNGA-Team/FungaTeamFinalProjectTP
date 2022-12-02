@@ -101,7 +101,7 @@ namespace AC
 				{
 					shouldShowCursor = false;
 				}
-				else if (KickStarter.playerInput.GetDragState () == DragState.Moveable)
+				else if (KickStarter.playerInput.GetDragState () == DragState.Moveable && KickStarter.cursorManager.hideCursorWhenDraggingMoveables)
 				{
 					shouldShowCursor = false;
 				}
@@ -423,7 +423,8 @@ namespace AC
 				}
 			}
 
-			if (KickStarter.stateHandler.gameState == GameState.Cutscene && KickStarter.cursorManager.waitIcon.texture)
+			GameState gameState = KickStarter.stateHandler.gameState;
+			if (gameState == GameState.Cutscene && KickStarter.cursorManager.waitIcon.texture)
 			{
 				// Wait
 				int elementOverCursorID = KickStarter.playerMenus.GetElementOverCursorID ();
@@ -434,6 +435,12 @@ namespace AC
 				}
 
 				DrawIcon (KickStarter.cursorManager.waitIcon, false);
+			}
+			else if (gameState == GameState.Normal && KickStarter.mainCamera.attachedCamera && KickStarter.mainCamera.attachedCamera.isDragControlled && KickStarter.cursorManager.cameraDragIcon.texture &&
+				(KickStarter.playerInput.GetDragState () == DragState._Camera || (KickStarter.playerInput.GetDragState () == DragState.None && KickStarter.playerInput.GetMouseState () == MouseState.HeldDown && KickStarter.playerInteraction.GetActiveHotspot () == null)))
+			{
+				// Camera drag
+				DrawIcon (KickStarter.cursorManager.cameraDragIcon, false);
 			}
 			else if (selectedCursor == -2 && InvInstance.IsValid (KickStarter.runtimeInventory.SelectedInstance))
 			{
@@ -550,7 +557,7 @@ namespace AC
 						{
 							if (!InvInstance.IsValid (KickStarter.runtimeInventory.HoverInstance) && KickStarter.playerInteraction.GetActiveHotspot () && (!KickStarter.playerMenus.IsInteractionMenuOn () || KickStarter.settingsManager.SelectInteractionMethod () == SelectInteractions.CyclingMenuAndClickingHotspot))
 							{
-								if (KickStarter.playerInteraction.GetActiveHotspot ().IsSingleInteraction ())
+								if (KickStarter.playerInteraction.GetActiveHotspot ().IsSingleInteraction () && KickStarter.cursorManager.allowInteractionCursor)
 								{
 									ShowContextIcons ();
 								}

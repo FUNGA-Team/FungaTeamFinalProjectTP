@@ -11,7 +11,7 @@ namespace AC
 	public class AdventureCreator : EditorWindow
 	{
 		
-		public const string version = "1.75.3";
+		public const string version = "1.75.8";
 	 
 		private bool showScene = true;
 		private bool showSettings = false;

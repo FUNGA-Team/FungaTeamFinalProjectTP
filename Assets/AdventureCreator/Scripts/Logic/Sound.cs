@@ -586,7 +586,7 @@ namespace AC
 
 			if (audioSource)
 			{
-				audioSource.playOnAwake = false;
+				//audioSource.playOnAwake = false;
 				audioSource.ignoreListenerPause = playWhilePaused;
 			}
 

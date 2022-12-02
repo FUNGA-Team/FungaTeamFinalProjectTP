@@ -10,8 +10,9 @@
  * 
  */
 
-using UnityEngine;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace AC
 {
@@ -29,6 +30,7 @@ namespace AC
 
 		/** A List of user-defined ShapeGroup instances, that define how the blendshapes are sorted */
 		public List<ShapeGroup> shapeGroups = new List<ShapeGroup>();
+		private Dictionary<int, float> blendshapeValueDict = new Dictionary<int, float> ();
 
 		protected SkinnedMeshRenderer skinnedMeshRenderer;
 		
@@ -51,24 +53,43 @@ namespace AC
 			if (SkinnedMeshRenderer)
 			{
 				// Set all values to zero
+				blendshapeValueDict.Clear ();
 				foreach (ShapeGroup shapeGroup in shapeGroups)
 				{
-					shapeGroup.SetSMR (SkinnedMeshRenderer);
-					
 					foreach (ShapeKey shapeKey in shapeGroup.shapeKeys)
 					{
-						shapeKey.SetValue (0f, SkinnedMeshRenderer);
+						shapeKey.SetValue (0f, ref blendshapeValueDict);
 					}
 				}
 			}
 		}
 
 
-		protected void LateUpdate ()
+		protected void Update ()
 		{
+			if (SkinnedMeshRenderer == null)
+			{
+				return;
+			}
+
+			blendshapeValueDict.Clear ();
 			foreach (ShapeGroup shapeGroup in shapeGroups)
 			{
-				shapeGroup.UpdateKeys ();
+				shapeGroup.UpdateKeys (ref blendshapeValueDict);
+			}
+		}
+
+
+		protected void LateUpdate ()
+		{
+			if (SkinnedMeshRenderer == null)
+			{
+				return;
+			}
+
+			foreach (int blendshapeIndex in blendshapeValueDict.Keys)
+			{
+				SkinnedMeshRenderer.SetBlendShapeWeight (blendshapeIndex, blendshapeValueDict[blendshapeIndex]);
 			}
 			
 			// OLD
@@ -250,6 +271,27 @@ namespace AC
 			}
 		}
 
+
+		public void SetTimelineOverride (int groupID, int keyID, int intensity)
+		{
+			ShapeGroup shapeGroup = GetGroup (groupID);
+			if (shapeGroup != null)
+			{
+				shapeGroup.SetTimelineOverride ( keyID, intensity, ref blendshapeValueDict);
+			}
+		}
+
+
+		public void SetTimelineOverride (int groupID, int keyID_A, int intensityA, int keyID_B, int intensityB)
+		{
+			ShapeGroup shapeGroup = GetGroup (groupID);
+			if (shapeGroup != null)
+			{
+				shapeGroup.SetTimelineOverride (keyID_A, intensityA, keyID_B, intensityB, ref blendshapeValueDict);
+			}
+		}
+
+
 		#endregion
 
 
@@ -294,7 +336,6 @@ namespace AC
 		public List<ShapeKey> shapeKeys = new List<ShapeKey>();
 
 		protected ShapeKey activeKey = null;
-		protected SkinnedMeshRenderer smr;
 		protected float startTime;
 		protected float changeTime;
 		protected AnimationCurve timeCurve;
@@ -321,7 +362,7 @@ namespace AC
 		}
 
 
-		public void SetTimelineOverride (int keyID, int intensity)
+		public void SetTimelineOverride (int keyID, int intensity, ref Dictionary<int, float> blendshapeValueDict)
 		{
 			isTimelineOverride = true;
 
@@ -329,17 +370,17 @@ namespace AC
 			{
 				if (shapeKeys[i].ID == keyID)
 				{
-					shapeKeys[i].SetValue (intensity, smr);
+					shapeKeys[i].SetValue (intensity, ref blendshapeValueDict);
 				}
 				else
 				{
-					shapeKeys[i].SetValue (0, smr);
+					shapeKeys[i].SetValue (0, ref blendshapeValueDict);
 				}
 			}
 		}
 
 
-		public void SetTimelineOverride (int keyID_A, int intensityA, int keyID_B, int intensityB)
+		public void SetTimelineOverride (int keyID_A, int intensityA, int keyID_B, int intensityB, ref Dictionary<int, float> blendshapeValueDict)
 		{
 			isTimelineOverride = true;
 
@@ -347,15 +388,15 @@ namespace AC
 			{
 				if (shapeKeys[i].ID == keyID_A)
 				{
-					shapeKeys[i].SetValue (intensityA, smr);
+					shapeKeys[i].SetValue (intensityA, ref blendshapeValueDict);
 				}
 				else if (shapeKeys[i].ID == keyID_B)
 				{
-					shapeKeys[i].SetValue (intensityB, smr);
+					shapeKeys[i].SetValue (intensityB, ref blendshapeValueDict);
 				}
 				else
 				{
-					shapeKeys[i].SetValue (0, smr);
+					shapeKeys[i].SetValue (0, ref blendshapeValueDict);
 				}
 			}
 		}
@@ -364,16 +405,6 @@ namespace AC
 		public void ReleaseTimelineOverride ()
 		{
 			isTimelineOverride = false;
-		}
-		
-
-		/**
-		 * <summary>Assigns the SkinnedMeshRenderer that this group is assocated with.</summary>
-		 * <param name = "_smr">The SkinnedMeshRenderer that this group is associated with.</param>
-		 */
-		public void SetSMR (SkinnedMeshRenderer _smr)
-		{
-			smr = _smr;
 		}
 		
 
@@ -482,9 +513,9 @@ namespace AC
 		
 
 		/** Updates the values of all blendshapes within the group. */
-		public void UpdateKeys ()
+		public void UpdateKeys (ref Dictionary<int, float> blendshapeValueDic)
 		{
-			if (smr == null || isTimelineOverride)
+			if (isTimelineOverride)
 			{
 				return;
 			}
@@ -494,7 +525,7 @@ namespace AC
 				if (changeTime > 0f)
 				{
 					float newValue = Mathf.Lerp (shapeKey.InitialValue, shapeKey.targetValue, AdvGame.Interpolate (startTime, changeTime, moveMethod, timeCurve));
-					shapeKey.SetValue (newValue, smr);
+					shapeKey.SetValue (newValue, ref blendshapeValueDic);
 					if ((startTime + changeTime) < Time.time)
 					{
 						changeTime = 0f;
@@ -502,7 +533,7 @@ namespace AC
 				}
 				else
 				{
-					shapeKey.SetValue (shapeKey.targetValue, smr);
+					shapeKey.SetValue (shapeKey.targetValue, ref blendshapeValueDic);
 				}
 			}
 		}
@@ -511,12 +542,15 @@ namespace AC
 	
 
 	/** A data container for a blendshape, stored within a ShapeGroup. */
-	[System.Serializable]
+	[Serializable]
 	public class ShapeKey
 	{
 
-		/** The index number of the SkinnedMeshRenderer's blendshapes that this is linked to */
-		public int index = 0;
+		/** Deprecated - use blendshapes instead */
+		[SerializeField] private int index = 0;
+
+		public List<ShapeKeyBlendshape> blendshapes = null;
+
 		/** An editor-friendly name of the blendshape */
 		public string label = "";
 		/** A unique identifier */
@@ -552,10 +586,15 @@ namespace AC
 		 * <param name = "_value">The value that the blendshape should have</param>
 		 * <param name = "smr">The SkinnedMeshRenderer component that the blendshape is a part of</param>
 		 */
-		public void SetValue (float _value, SkinnedMeshRenderer smr)
+		public void SetValue (float _value, ref Dictionary<int, float> blendshapeValueDict)
 		{
+			Upgrade ();
 			value = _value;
-			smr.SetBlendShapeWeight (index, value);
+
+			for (int i = 0; i < blendshapes.Count; i++)
+			{
+				blendshapes[i].Update (value, ref blendshapeValueDict);
+			}
 		}
 
 
@@ -563,6 +602,7 @@ namespace AC
 		{
 			get
 			{
+				Upgrade ();
 				return initialValue;
 			}
 		}
@@ -570,9 +610,56 @@ namespace AC
 
 		public void ResetInitialValue ()
 		{
+			Upgrade ();
 			initialValue = value;
 		}
+
+
+		public void Upgrade ()
+		{
+			if (blendshapes == null || index >= 0)
+			{
+				blendshapes = new List<ShapeKeyBlendshape> ();
+				blendshapes.Add (new ShapeKeyBlendshape (index));
+				index = -1;
+			}
+		}
 		
+	}
+
+
+	[Serializable]
+	public class ShapeKeyBlendshape
+	{
+
+		public int index;
+		public float relativeIntensity;
+
+
+		public ShapeKeyBlendshape (int _index, float _relativeIntensity = 100f)
+		{
+			index = _index;
+			relativeIntensity = _relativeIntensity;
+		}
+
+
+		public void Update (float value, ref Dictionary<int, float> blendshapeValueDict)
+		{
+			float finalIntensity = value * relativeIntensity / 100f;
+			float currentIntensity = 0f;
+			if (blendshapeValueDict.TryGetValue (index, out currentIntensity))
+			{
+				if (finalIntensity > currentIntensity)
+				{
+					blendshapeValueDict[index] = finalIntensity;
+				}
+			}
+			else
+			{
+				blendshapeValueDict.Add (index, finalIntensity);
+			}
+		}
+
 	}
 	
 }

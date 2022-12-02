@@ -72,7 +72,7 @@ namespace AC
 		{
 			get
 			{
-				return (Cursor.lockState == CursorLockMode.Locked) ? true : false;
+				return Cursor.lockState == CursorLockMode.Locked;
 			}
 			set
 			{

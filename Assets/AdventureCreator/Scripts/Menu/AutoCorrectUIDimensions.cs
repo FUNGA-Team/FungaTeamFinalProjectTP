@@ -104,7 +104,7 @@ namespace AC
 
 			if (updatePosition && transformToControl == null)
 			{
-				ACDebug.LogWarning ("Cannot find which Transform to reposition with the AutoCorrectUIDimensions component - either assign the Transform To Control field, or link the Canvas to a Menu.", this);
+				ACDebug.LogWarning ("Cannot find which Transform to reposition with the AutoCorrectUIDimensions component - either assign the Transform To Control field, or link the Canvas to a Menu with a RectTransform boundary.", this);
 			}
 
 			// Position

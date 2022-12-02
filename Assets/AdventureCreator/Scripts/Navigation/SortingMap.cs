@@ -98,9 +98,7 @@ namespace AC
 
 		#region PublicFunctions
 
-		/**
-		 * <summary>Adjusts all relevant FollowSortingMaps that are within the same region, so that they are all displayed correctly.</summary>
-		 */
+		/** Adjusts all relevant FollowSortingMaps that are within the same region, so that they are all displayed correctly. */
 		public void UpdateSimilarFollowers ()
 		{
 			if (KickStarter.sceneSettings.sharedLayerSeparationDistance <= 0f)

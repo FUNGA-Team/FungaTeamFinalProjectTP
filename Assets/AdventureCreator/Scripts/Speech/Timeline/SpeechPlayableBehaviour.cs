@@ -17,7 +17,6 @@ using UnityEngine.AddressableAssets;
 #if !ACIgnoreTimeline
 using UnityEngine;
 using UnityEngine.Playables;
-using UnityEngine.Timeline;
 
 namespace AC
 {

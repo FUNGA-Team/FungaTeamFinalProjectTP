@@ -100,10 +100,17 @@ namespace AC
 								string cellText = cells[i];
 								if (cellText.StartsWith (textSeparator) && cellText.EndsWith (textSeparator))
 								{
-									cellText = cellText.Substring (1, cellText.Length - 2);
-									if (cellText.Contains (textSeparator + textSeparator))
+									if (cellText.Length == textSeparator.Length)
 									{
-										cellText = cellText.Replace (textSeparator + textSeparator, textSeparator);
+										cellText = string.Empty;
+									}
+									else
+									{
+										cellText = cellText.Substring (1, cellText.Length - 2);
+										if (cellText.Contains (textSeparator + textSeparator))
+										{
+											cellText = cellText.Replace (textSeparator + textSeparator, textSeparator);
+										}
 									}
 								}
 								cells[i] = cellText;
@@ -124,7 +131,7 @@ namespace AC
 								{
 									if (x >= contents[y].Length)
 									{
-										Debug.LogWarning ("Error importing file row: " + y + ", line ID: " + contents[y][0] + " - its column count differs from the header. Skipping.");
+										Debug.LogWarning ("Error importing file row: " + y + ", line ID: " + contents[y][0] + " - its column count (" + contents[y].Length + ") differs from the header + (" + contents[0].Length + "). Skipping.");
 									}
 									else
 									{

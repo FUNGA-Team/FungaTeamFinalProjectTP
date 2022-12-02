@@ -1344,7 +1344,7 @@ namespace AC
 
 				if (field == null)
 				{
-					ACDebug.LogWarning ("Cannot find linked UI Element for " + title, canvas);
+					ACDebug.LogWarning ("Cannot find " + typeof (T) + " for menu element " + title + " in Canvas " + canvas.name, canvas);
 				}
 				return field;
 			}

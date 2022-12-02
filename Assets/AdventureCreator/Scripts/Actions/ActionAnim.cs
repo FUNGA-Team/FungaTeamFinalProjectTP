@@ -146,7 +146,7 @@ namespace AC
 			animationEngine = (AnimationEngine) EditorGUILayout.EnumPopup ("Animation engine:", animationEngine);
 			if (animationEngine == AnimationEngine.Custom)
 			{
-				customClassName = EditorGUILayout.TextField ("Script name:", customClassName);
+				customClassName = EditorGUILayout.DelayedTextField ("Script name:", customClassName);
 			}
 
 			if (animEngine)

@@ -170,12 +170,10 @@ namespace AC
 						EditorGUILayout.HelpBox ("The above property can be accessed by reading the Hotspot script's IsSingleInteraction() method.", MessageType.Info);
 					}
 				}
-				if (_target.oneClick || (settingsManager != null && settingsManager.interactionMethod == AC_InteractionMethod.ContextSensitive) || (settingsManager != null && settingsManager.interactionMethod == AC_InteractionMethod.ChooseHotspotThenInteraction && _target.oneClick))
-			    {
-			    	if (settingsManager != null && settingsManager.interactionMethod == AC_InteractionMethod.CustomScript)
-			    	{}
-			    	else
-			    	{
+				if (_target.oneClick || (settingsManager != null && settingsManager.interactionMethod == AC_InteractionMethod.ContextSensitive))
+				{
+					if (!(settingsManager != null && settingsManager.interactionMethod == AC_InteractionMethod.CustomScript))
+					{
 						_target.doubleClickingHotspot = (DoubleClickingHotspot) CustomGUILayout.EnumPopup ("Double-clicking:", _target.doubleClickingHotspot, string.Empty, "The effect that double-clicking on the Hotspot has");
 					}
 				}
@@ -548,11 +546,11 @@ namespace AC
 					{
 						string defaultName = GenerateInteractionName (suffix, true);
 
-#if !(UNITY_WP8 || UNITY_WINRT)
+						#if !(UNITY_WP8 || UNITY_WINRT)
 						defaultName = System.Text.RegularExpressions.Regex.Replace (defaultName, "[^\\w\\._]", string.Empty);
-#else
+						#else
 						defaultName = string.Empty;
-#endif
+						#endif
 
 						button.assetFile = ActionListAssetMenu.CreateAsset (defaultName);
 					}
@@ -640,7 +638,7 @@ namespace AC
 			{
 				if (button.playerAction == PlayerAction.WalkToMarker && _target.walkToMarker == null)
 				{
-					EditorGUILayout.HelpBox ("You must assign a 'Walk-to marker' above for this option to work.", MessageType.Warning);
+					EditorGUILayout.HelpBox ("A 'Walk-to marker' must be assigned above for this option to work.", MessageType.Warning);
 				}
 				button.isBlocking = CustomGUILayout.Toggle ("Cutscene while moving?", button.isBlocking, string.Empty, "If True, then gameplay will be blocked while the Player moves");
 				button.faceAfter = CustomGUILayout.Toggle ("Face after moving?", button.faceAfter, string.Empty, "If True, then the Player will face the Hotspot after reaching the Marker");
@@ -651,6 +649,18 @@ namespace AC
 					if (button.setProximity)
 					{
 						button.proximity = CustomGUILayout.FloatField ("Proximity:", button.proximity, string.Empty, "The proximity the Player must be within");
+					}
+				}
+				if (button.playerAction == PlayerAction.WalkToMarker && _target.walkToMarker && !button.isBlocking && _target.doubleClickingHotspot == DoubleClickingHotspot.TriggersInteractionInstantly)
+				{
+					if (_target.oneClick || (settingsManager != null && settingsManager.interactionMethod == AC_InteractionMethod.ContextSensitive))
+					{
+						if (!(settingsManager != null && settingsManager.interactionMethod == AC_InteractionMethod.CustomScript))
+						{
+							bool doubleClickSnapsToMarker = !button.doubleClickDoesNotSnapPlayerToMarker;
+							doubleClickSnapsToMarker = CustomGUILayout.Toggle ("Snap Player if double-click?", doubleClickSnapsToMarker, string.Empty, "If True, then double-clicking the Hotspot will snap the Player to the Walk-to Marker before the Interaction is run");
+							button.doubleClickDoesNotSnapPlayerToMarker = !doubleClickSnapsToMarker;
+						}
 					}
 				}
 			}

@@ -30,6 +30,7 @@ namespace AC
 		public int sceneNumber;
 		public string sceneName;
 		public bool resetMenus;
+		public bool killActionLists;
 		
 		
 		public override ActionCategory Category { get { return ActionCategory.Engine; }}
@@ -58,12 +59,12 @@ namespace AC
 					if (KickStarter.settingsManager.referenceScenesInSave == ChooseSceneBy.Name)
 					{
 						string _sceneName = (chooseSceneBy == ChooseSceneBy.Name) ? sceneName : KickStarter.sceneChanger.IndexToName (sceneNumber);
-						KickStarter.RestartGame (resetMenus, _sceneName);
+						KickStarter.RestartGame (resetMenus, _sceneName, killActionLists);
 					}
 					else if (KickStarter.settingsManager.referenceScenesInSave == ChooseSceneBy.Number)
 					{
 						int _sceneIndex = (chooseSceneBy == ChooseSceneBy.Name) ? KickStarter.sceneChanger.NameToIndex (sceneName) : sceneNumber;
-						KickStarter.RestartGame (resetMenus, _sceneIndex);
+						KickStarter.RestartGame (resetMenus, _sceneIndex, killActionLists);
 					}
 					break;
 
@@ -97,7 +98,8 @@ namespace AC
 					sceneNumber = EditorGUILayout.IntField ("Scene to restart to:", sceneNumber);
 				}
 
-				resetMenus = EditorGUILayout.Toggle ("Reset Menus too?", resetMenus);
+				resetMenus = EditorGUILayout.Toggle ("Reset all Menus?", resetMenus);
+				killActionLists = EditorGUILayout.Toggle ("End all ActionLists?", killActionLists);
 			}
 		}
 		

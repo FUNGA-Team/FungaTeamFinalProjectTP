@@ -55,8 +55,6 @@ namespace AC
 		{
 			if (!isRunning)
 			{
-				isRunning = true;
-				
 				MainCamera mainCam = KickStarter.mainCamera;
 				
 				if (mainCam)
@@ -92,12 +90,14 @@ namespace AC
 									runtimeLinkedCameraAnimated = runtimeLinkedCamera as GameCameraAnimated;
 									if (transitionTime > 0f)
 									{
+										isRunning = true;
 										return defaultPauseTime;
 									}
 									else
 									{
 										if (runtimeLinkedCameraAnimated && waitForAnimation)
 										{
+											isRunning = true;
 											return defaultPauseTime;
 										}
 									}
@@ -205,7 +205,7 @@ namespace AC
 					{
 						timeCurve = EditorGUILayout.CurveField ("Time curve:", timeCurve);
 					}
-                    retainPreviousSpeed = EditorGUILayout.Toggle ("Smooth transition out?", retainPreviousSpeed);
+					retainPreviousSpeed = EditorGUILayout.Toggle ("Smooth transition out?", retainPreviousSpeed);
 				}
 			}
 			

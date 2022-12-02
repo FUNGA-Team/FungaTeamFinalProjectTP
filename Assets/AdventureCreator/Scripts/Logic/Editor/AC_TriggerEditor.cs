@@ -49,6 +49,14 @@ namespace AC
 			}
 			_target.triggerType = CustomGUILayout.Popup ("Trigger type:", _target.triggerType, Options, string.Empty, "What kind of contact the Trigger reacts to");
 			_target.triggerReacts = (TriggerReacts) CustomGUILayout.EnumPopup ("Reacts:", _target.triggerReacts, string.Empty, "The state of the game under which the trigger reacts");
+
+			if (_target.triggerReacts == TriggerReacts.DuringCutscenesAndGameplay ||
+				(_target.triggerReacts == TriggerReacts.OnlyDuringCutscenes && _target.actionListType == ActionListType.PauseGameplay) ||
+				(_target.triggerReacts == TriggerReacts.OnlyDuringGameplay && _target.actionListType == ActionListType.RunInBackground))
+			{
+				_target.canInterruptSelf = CustomGUILayout.Toggle ("Can interrupt self?", _target.canInterruptSelf, string.Empty, "If True, then the Trigger will restart if it is triggered while already running. Otherwise, it will not restart.");
+			}
+
 			_target.cancelInteractions = CustomGUILayout.Toggle ("Cancels interactions?", _target.cancelInteractions, string.Empty, "If True, and the Player sets off the Trigger while walking towards a Hotspot Interaction, then the Player will stop and the Interaction will be cancelled");
 			_target.tagID = ShowTagUI (_target.actions.ToArray (), _target.tagID);
 

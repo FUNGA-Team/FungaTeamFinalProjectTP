@@ -53,36 +53,44 @@ namespace AC
 			
 			if (runtimeObToAffect != null)
 			{
-				LimitVisibility limitVisibility = runtimeObToAffect.GetComponent <LimitVisibility>();
+				LimitVisibility limitVisibility = runtimeObToAffect.GetComponent<LimitVisibility> ();
 				if (limitVisibility)
 				{
 					limitVisibility.IsLockedOff = !state;
 				}
 				else
 				{
-					Renderer renderer = runtimeObToAffect.GetComponent <Renderer>();
+					Renderer renderer = runtimeObToAffect.GetComponent<Renderer> ();
 					if (renderer)
 					{
 						renderer.enabled = state;
 					}
 					else
 					{
-						Canvas canvas = runtimeObToAffect.GetComponent <Canvas>();
+						Canvas canvas = runtimeObToAffect.GetComponent<Canvas> ();
 						if (canvas)
 						{
 							canvas.enabled = state;
+						}
+						else
+						{
+							CanvasGroup canvasGroup = runtimeObToAffect.GetComponent<CanvasGroup> ();
+							if (canvasGroup)
+							{
+								canvasGroup.alpha = state ? 1f : 0f;
+							}
 						}
 					}
 				}
 
 				if (affectChildren)
 				{
-					foreach (Renderer _renderer in runtimeObToAffect.GetComponentsInChildren <Renderer>())
+					foreach (Renderer _renderer in runtimeObToAffect.GetComponentsInChildren<Renderer> ())
 					{
 						_renderer.enabled = state;
 					}
 				}
-					
+
 			}
 			
 			return 0f;

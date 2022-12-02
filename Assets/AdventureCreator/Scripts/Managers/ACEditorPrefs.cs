@@ -43,6 +43,7 @@ namespace AC
 		[SerializeField] protected int actionNodeWidth = 300;
 		[SerializeField] protected bool disableInstaller = false;
 		[SerializeField] protected string installPath = DefaultInstallPath;
+		[SerializeField] protected int autosaveActionListsInterval = 10;
 
 
 		internal static ACEditorPrefs GetOrCreateSettings ()
@@ -93,6 +94,7 @@ namespace AC
 					settings.actionNodeWidth = DefaultActionNodeWidth;
 					settings.disableInstaller = DefaultDisableInstaller;
 					settings.installPath = DefaultInstallPath;
+					settings.autosaveActionListsInterval = DefaultAutosaveActionListsInterval;
 					AssetDatabase.CreateAsset (settings, fullPath);
 					Debug.Log ("Created new AC EditorPrefs asset: '" + fullPath + "'", settings);
 					AssetDatabase.SaveAssets ();
@@ -109,11 +111,10 @@ namespace AC
 
 		#if CAN_USE_EDITOR_PREFS
 
-		
 		internal static SerializedObject GetSerializedSettings ()
 		{
 			ACEditorPrefs settings = GetOrCreateSettings ();
-			if (settings != null)
+			if (settings)
 			{
 				return new SerializedObject (settings);
 			}
@@ -129,7 +130,13 @@ namespace AC
 			get
 			{
 				ACEditorPrefs settings = GetOrCreateSettings ();
-				return (settings != null) ? settings.hierarchyIconOffset : DefaultHierarchyIconOffset;
+				return settings ? settings.hierarchyIconOffset : DefaultHierarchyIconOffset;
+			}
+			set
+			{
+				ACEditorPrefs settings = GetOrCreateSettings ();
+				if (settings) settings.hierarchyIconOffset = value;
+				if (settings) EditorUtility.SetDirty (settings);
 			}
 		}
 
@@ -149,7 +156,13 @@ namespace AC
 			get
 			{
 				ACEditorPrefs settings = GetOrCreateSettings ();
-				return (settings != null) ? settings.editorLabelWidth : DefaultEditorLabelWidth;
+				return settings ? settings.editorLabelWidth : DefaultEditorLabelWidth;
+			}
+			set
+			{
+				ACEditorPrefs settings = GetOrCreateSettings ();
+				if (settings) settings.editorLabelWidth = value;
+				if (settings) EditorUtility.SetDirty (settings);
 			}
 		}
 
@@ -174,6 +187,12 @@ namespace AC
 				if (value <= 0) return DefaultActionNodeWidth;
 				return Mathf.Clamp (value, 200, 800);
 			}
+			set
+			{
+				ACEditorPrefs settings = GetOrCreateSettings ();
+				if (settings) settings.actionNodeWidth = Mathf.Clamp (value, 200, 800);
+				if (settings) EditorUtility.SetDirty (settings);
+			}
 		}
 
 
@@ -192,7 +211,13 @@ namespace AC
 			get
 			{
 				ACEditorPrefs settings = GetOrCreateSettings ();
-				return (settings != null) ? settings.showHierarchyIcons : DefaultShowHierarchyIcons;
+				return settings ? settings.showHierarchyIcons : DefaultShowHierarchyIcons;
+			}
+			set
+			{
+				ACEditorPrefs settings = GetOrCreateSettings ();
+				if (settings) settings.showHierarchyIcons = value;
+				if (settings) EditorUtility.SetDirty (settings);
 			}
 		}
 
@@ -212,7 +237,13 @@ namespace AC
 			get
 			{
 				ACEditorPrefs settings = GetOrCreateSettings ();
-				return (settings != null) ? settings.hotspotGizmoColor : DefaultHotspotGizmoColor;
+				return settings ? settings.hotspotGizmoColor : DefaultHotspotGizmoColor;
+			}
+			set
+			{
+				ACEditorPrefs settings = GetOrCreateSettings ();
+				if (settings) settings.hotspotGizmoColor = value;
+				if (settings) EditorUtility.SetDirty (settings);
 			}
 		}
 
@@ -232,7 +263,13 @@ namespace AC
 			get
 			{
 				ACEditorPrefs settings = GetOrCreateSettings ();
-				return (settings != null) ? settings.triggerGizmoColor : DefaultTriggerGizmoColor;
+				return settings ? settings.triggerGizmoColor : DefaultTriggerGizmoColor;
+			}
+			set
+			{
+				ACEditorPrefs settings = GetOrCreateSettings ();
+				if (settings) settings.triggerGizmoColor = value;
+				if (settings) EditorUtility.SetDirty (settings);
 			}
 		}
 
@@ -252,7 +289,13 @@ namespace AC
 			get
 			{
 				ACEditorPrefs settings = GetOrCreateSettings ();
-				return (settings != null) ? settings.collisionGizmoColor : DefaultCollisionGizmoColor;
+				return settings ? settings.collisionGizmoColor : DefaultCollisionGizmoColor;
+			}
+			set
+			{
+				ACEditorPrefs settings = GetOrCreateSettings ();
+				if (settings) settings.collisionGizmoColor = value;
+				if (settings) EditorUtility.SetDirty (settings);
 			}
 		}
 
@@ -272,7 +315,13 @@ namespace AC
 			get
 			{
 				ACEditorPrefs settings = GetOrCreateSettings ();
-				return (settings != null) ? settings.pathGizmoColor : DefaultPathGizmoColor;
+				return settings ? settings.pathGizmoColor : DefaultPathGizmoColor;
+			}
+			set
+			{
+				ACEditorPrefs settings = GetOrCreateSettings ();
+				if (settings) settings.pathGizmoColor = value;
+				if (settings) EditorUtility.SetDirty (settings);
 			}
 		}
 
@@ -292,7 +341,13 @@ namespace AC
 			get
 			{
 				ACEditorPrefs settings = GetOrCreateSettings ();
-				return (settings != null) ? settings.csvFormat : DefaultCSVFormat;
+				return settings ? settings.csvFormat : DefaultCSVFormat;
+			}
+			set
+			{
+				ACEditorPrefs settings = GetOrCreateSettings ();
+				if (settings) settings.csvFormat = value;
+				if (settings) EditorUtility.SetDirty (settings);
 			}
 		}
 
@@ -312,7 +367,13 @@ namespace AC
 			get
 			{
 				ACEditorPrefs settings = GetOrCreateSettings ();
-				return (settings != null) ? settings.menuItemsBeforeScroll : DefaultMenuItemsBeforeScroll;
+				return settings ? settings.menuItemsBeforeScroll : DefaultMenuItemsBeforeScroll;
+			}
+			set
+			{
+				ACEditorPrefs settings = GetOrCreateSettings ();
+				if (settings) settings.menuItemsBeforeScroll = value;
+				if (settings) EditorUtility.SetDirty (settings);
 			}
 		}
 
@@ -332,7 +393,13 @@ namespace AC
 			get
 			{
 				ACEditorPrefs settings = GetOrCreateSettings ();
-				return (settings != null) ? settings.disableInstaller : DefaultDisableInstaller;
+				return settings ? settings.disableInstaller : DefaultDisableInstaller;
+			}
+			set
+			{
+				ACEditorPrefs settings = GetOrCreateSettings ();
+				if (settings) settings.disableInstaller = value;
+				if (settings) EditorUtility.SetDirty (settings);
 			}
 		}
 
@@ -351,10 +418,41 @@ namespace AC
 			get
 			{
 				ACEditorPrefs settings = GetOrCreateSettings ();
-				return (settings != null) ? settings.installPath : DefaultInstallPath;
+				return (settings) ? settings.installPath : DefaultInstallPath;
+			}
+			set
+			{
+				ACEditorPrefs settings = GetOrCreateSettings ();
+				if (settings) settings.installPath = value;
+				if (settings) EditorUtility.SetDirty (settings);
 			}
 		}
-		
+
+
+		public static int AutosaveActionListsInterval
+		{
+			get
+			{
+				ACEditorPrefs settings = GetOrCreateSettings ();
+				return settings ? settings.autosaveActionListsInterval : DefaultAutosaveActionListsInterval;
+			}
+			set
+			{
+				ACEditorPrefs settings = GetOrCreateSettings ();
+				if (settings) settings.autosaveActionListsInterval = value;
+				if (settings) EditorUtility.SetDirty (settings);
+			}
+		}
+
+
+		private static int DefaultAutosaveActionListsInterval
+		{
+			get
+			{
+				return 10;
+			}
+		}
+
 		#endif
 
 	}
@@ -396,8 +494,18 @@ namespace AC
 						EditorGUILayout.PropertyField (settings.FindProperty ("installPath"), new GUIContent ("Install path:", "The filepath to AC's root folder"));
 						EditorGUILayout.PropertyField (settings.FindProperty ("editorLabelWidth"), new GUIContent ("Label widths:", "How wide to render labels in Managers and other editors"));
 						EditorGUILayout.PropertyField (settings.FindProperty ("menuItemsBeforeScroll"), new GUIContent ("Items before scrolling:", "How many Menus, Inventory items, Variables etc can be listed in the AC Game Editor before scrolling becomes necessary"));
-						EditorGUILayout.PropertyField (settings.FindProperty ("actionNodeWidth"), new GUIContent ("Action node widths:", "How wide Actions are when rendered as nodes in the ActionList Editor window"));
 						EditorGUILayout.PropertyField (settings.FindProperty ("disableInstaller"), new GUIContent ("Bypass install checks?", "If True, checks for AC's required Input and Layer settings will be bypassed"));
+
+						EditorGUILayout.Space ();
+						EditorGUILayout.LabelField ("ActionList settings", EditorStyles.boldLabel);
+						EditorGUILayout.BeginHorizontal ();
+						EditorGUILayout.PropertyField (settings.FindProperty ("autosaveActionListsInterval"), new GUIContent ("Autosave interval (m):", "How often - in minutes - scene-based ActionList data should be backed-up (set to 0 to disable)"));
+						if (GUILayout.Button ("Autosave all now", GUILayout.MaxWidth (160f)))
+						{
+							AutosaveAll ();
+						}
+						EditorGUILayout.EndHorizontal ();
+						EditorGUILayout.PropertyField (settings.FindProperty ("actionNodeWidth"), new GUIContent ("Node width:", "How wide Actions are when rendered as nodes in the ActionList Editor window"));
 
 						EditorGUILayout.Space ();
 						EditorGUILayout.LabelField ("Import / export", EditorStyles.boldLabel);
@@ -414,6 +522,51 @@ namespace AC
 
 			return provider;
 		}
+
+
+		private static void AutosaveAll ()
+		{
+			bool canProceed = EditorUtility.DisplayDialog ("Auto-save all ActionLists", "AC will now go through your game's build settings, and backup the data for all scene-based ActionLists. It is recommended to back up your project beforehand.", "OK", "Cancel");
+			if (!canProceed) return;
+
+			if (UnityEditor.SceneManagement.EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo ())
+			{
+				string originalScene = UnityVersionHandler.GetCurrentSceneFilepath ();
+				string[] sceneFiles = AdvGame.GetSceneFiles ();
+
+				// First look for lines that already have an assigned lineID
+				foreach (string sceneFile in sceneFiles)
+				{
+					AutosaveActions (sceneFile);
+				}
+
+				ACDebug.Log ("Process complete - " + sceneFiles.Length + " scenes processed.");
+
+				UnityVersionHandler.OpenScene (originalScene);
+			}
+		}
+
+
+		private static void AutosaveActions (string sceneFile)
+		{
+			UnityVersionHandler.OpenScene (sceneFile);
+
+			ActionList[] actionLists = UnityEngine.Object.FindObjectsOfType<ActionList> ();
+			if (actionLists.Length == 0)
+			{
+				return;
+			}
+
+			JsonAction.CacheSceneObjectReferences ();
+			foreach (ActionList actionList in actionLists)
+			{
+				actionList.BackupData ();
+			}
+			JsonAction.ClearSceneObjectReferencesCache ();
+
+			UnityVersionHandler.SaveScene ();
+		}
+
 	}
 
 	#endif

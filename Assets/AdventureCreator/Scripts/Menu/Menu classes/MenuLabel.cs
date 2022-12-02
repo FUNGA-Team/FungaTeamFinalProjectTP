@@ -70,17 +70,10 @@ namespace AC
 		/** The InventoryBox slot number to retrieve properties for, if itemInInventoryBox = ItemInInventoryBox.ItemInSlot */
 		public int itemSlotNumber;
 
-		private MenuJournal linkedJournal;
-		private MenuInventoryBox linkedInventoryBox;
-
 		private string newLabel = "";
 		private Speech speech;
 		private Color speechColour;
 		private bool isDuppingSpeech;
-
-		#if UNITY_EDITOR
-		private VariablesManager variablesManager;
-		#endif
 
 
 		public override void Declare ()
@@ -533,7 +526,7 @@ namespace AC
 								}
 								else
 								{
-									line = speech.FullText;
+									line = speech.log.textWithRichTextTags;
 									uiText.maxVisibleCharacters = speech.CurrentCharIndex;
 								}
 							}

@@ -24,6 +24,8 @@ namespace AC
 	public class RememberVisibility : Remember
 	{
 
+		#region Variables
+
 		/** Whether the Renderer is enabled or not when the game begins */
 		public AC_OnOff startState = AC_OnOff.On;
 		/** True if child Renderers should be affected as well */
@@ -32,16 +34,21 @@ namespace AC
 		public bool saveColour = false;
 
 		private LimitVisibility limitVisibility;
-		private bool loadedData = false;
 
-		
-		private void Awake ()
+		#endregion
+
+
+		#region UnityStandards
+
+		protected override void Start ()
 		{
-			if (loadedData) return;
+			base.Start ();
 
+			if (loadedData) return;
+			
 			if (GameIsPlaying ())
 			{
-				bool state = (startState == AC_OnOff.On) ? true : false;
+				bool state = startState == AC_OnOff.On;
 
 				limitVisibility = GetComponent <LimitVisibility>();
 				if (limitVisibility)
@@ -67,6 +74,10 @@ namespace AC
 			}
 		}
 
+		#endregion
+
+
+		#region PublicFunctions
 
 		/**
 		 * <summary>Serialises appropriate GameObject values into a string.</summary>
@@ -81,10 +92,10 @@ namespace AC
 			SpriteFader spriteFader = GetComponent <SpriteFader>();
 			if (spriteFader)
 			{
-				visibilityData.isFading = spriteFader.isFading;
-				if (spriteFader.isFading)
+				visibilityData.isFading = spriteFader.IsFading;
+				if (spriteFader.IsFading)
 				{
-					if (spriteFader.fadeType == FadeType.fadeIn)
+					if (spriteFader.FadeType == FadeType.fadeIn)
 					{
 						visibilityData.isFadingIn = true;
 					}
@@ -93,8 +104,8 @@ namespace AC
 						visibilityData.isFadingIn = false;
 					}
 
-					visibilityData.fadeTime = spriteFader.fadeTime;
-					visibilityData.fadeStartTime = spriteFader.fadeStartTime;
+					visibilityData.fadeTime = spriteFader.FadeTime;
+					visibilityData.fadeStartTime = spriteFader.FadeStartTime;
 				}
 				visibilityData.fadeAlpha = GetComponent <SpriteRenderer>().color.a;
 			}
@@ -157,7 +168,6 @@ namespace AC
 			VisibilityData data = Serializer.LoadScriptData <VisibilityData> (stringData);
 			if (data == null)
 			{
-				loadedData = false;
 				return;
 			}
 			SavePrevented = data.savePrevented; if (savePrevented) return;
@@ -233,13 +243,13 @@ namespace AC
 
 			loadedData = true;
 		}
-		
+
+		#endregion
+
 	}
 
 
-	/**
-	 * A data container used by the RememberVisibility script.
-	 */
+	/** A data container used by the RememberVisibility script. */
 	[System.Serializable]
 	public class VisibilityData : RememberData
 	{
@@ -273,9 +283,7 @@ namespace AC
 		/** The Alpha channel of the sprite's colour */
 		public float colourA;
 
-		/**
-		 * The default Constructor.
-		 */
+		/** The default Constructor. */
 		public VisibilityData () { }
 
 	}

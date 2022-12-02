@@ -158,7 +158,7 @@ namespace AC
 				speechManager.GetAllActionListAssets ();
 			}
 
-			int numUpdated = 0;
+			HashSet<SpeechLine> updatedLines = new HashSet<SpeechLine> ();
 			for (int row = 1; row < numRows; row ++)
 			{
 				if (csvData [0, row] != null && csvData [0, row].Length > 0)
@@ -177,7 +177,10 @@ namespace AC
 									string cellData = csvData [col, row];
 									if (importColumns[col].Process (speechManager, cellData, speechLine))
 									{
-										numUpdated ++;
+										if (!updatedLines.Contains (speechLine))
+										{
+											updatedLines.Add (speechLine);
+										}
 									}
 								}
 							}
@@ -197,8 +200,16 @@ namespace AC
 
 			speechManager.CacheDisplayLines ();
 			EditorUtility.SetDirty (speechManager);
-			ACDebug.Log ((numRows-2).ToString () + " line(s) imported, " + numUpdated.ToString () + " line(s) updated.");
 
+			int numLinesImported = (numRows - 2);
+			int numLinesUpdated = updatedLines.Count;
+
+			foreach (SpeechLine updatedLine in updatedLines)
+			{
+				ACDebug.Log ("Updated line ID: " + updatedLine.lineID + ", Type: " + updatedLine.textType + ", Text: '" + updatedLine.text + "'");
+			}
+
+			EditorUtility.DisplayDialog ("Import game text", "Process complete.\n\n" + numLinesImported + " line(s) imported, " + numLinesUpdated + " line(s) updated.", "OK");
 
 			this.Close ();
 			#endif
@@ -331,9 +342,9 @@ namespace AC
 
 			private string AddLineBreaks (string text)
 			{
-	            text = text.Replace ("[break]", "\n");
-	            return text;
-	        }
+				text = text.Replace ("[break]", "\n");
+				return text;
+			}
 	
 		}
 		

@@ -110,7 +110,9 @@ namespace AC
 			if (saveTimelineAsset && KickStarter.settingsManager.saveAssetReferencesWithAddressables && !string.IsNullOrEmpty (data.timelineAssetID))
 			{
 				StopAllCoroutines ();
+				#if !ACIgnoreTimeline
 				StartCoroutine (LoadDataFromAddressable (data));
+				#endif
 				return;
 			}
 
@@ -120,7 +122,7 @@ namespace AC
 		}
 
 
-		#if AddressableIsPresent
+		#if AddressableIsPresent && !ACIgnoreTimeline
 
 		private IEnumerator LoadDataFromAddressable (TimelineData data)
 		{

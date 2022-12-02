@@ -58,6 +58,8 @@ namespace AC
 
 		/** If True, the fade texture will be rendered on the script automatically.  If False, the user can read this script's GetFadeTexture and GetFadeAlpha values to render it with a custom technique. */
 		[SerializeField] protected bool renderFading = true;
+		/** If True, borders will be drawn outside of the playable screen area. */
+		[SerializeField] protected bool renderBorders = true;
 
 		protected _Camera transitionFromCamera;
 
@@ -1047,6 +1049,11 @@ namespace AC
 				SetAspectRatio ();
 			}
 
+			if (!renderBorders)
+			{
+				return;
+			}
+
 			if (borderWidth > 0f)
 			{
 				if (fadeTexture == null)
@@ -1257,6 +1264,12 @@ namespace AC
 			SetGameCamera (_camera1);
 			StartSplitScreen (_splitAmountMain, _splitAmountOther);
 		}
+
+
+		public void SwapSplitScreenMainCamera ()
+		{
+			SetSplitScreen (splitCamera, attachedCamera, splitOrientation, !isTopLeftSplit, splitAmountMain, splitAmountOther);
+		}
 		
 
 		/**
@@ -1272,6 +1285,8 @@ namespace AC
 			splitCamera.SetSplitScreen ();
 			SetCameraRect ();
 			SetMidBorder ();
+
+			KickStarter.eventManager.Call_OnCameraSplitScreenStart (splitCamera, splitOrientation, splitAmountMain, splitAmountOther, isTopLeftSplit);
 		}
 
 
@@ -1315,11 +1330,11 @@ namespace AC
 		}
 
 
-		/**
-		 * Ends any active split-screen effect.
-		 */
+		/** Ends any active split-screen effect. */
 		public void RemoveSplitScreen ()
 		{
+			_Camera _splitCamera = isSplitScreen ? splitCamera : null;
+
 			if (isSplitScreen && splitOrientation == CameraSplitOrientation.Overlay)
 			{
 				Camera.depth = overlayDepthBackup;
@@ -1338,6 +1353,11 @@ namespace AC
 				}
 
 				splitCamera = null;
+			}
+
+			if (_splitCamera) 
+			{
+				KickStarter.eventManager.Call_OnCameraSplitScreenStop (_splitCamera);
 			}
 		}
 
@@ -2553,11 +2573,12 @@ namespace AC
 		{
 			CustomGUILayout.BeginVertical ();
 			fadeTexture = (Texture2D) CustomGUILayout.ObjectField <Texture2D> ("Fade texture:", fadeTexture, false, string.Empty, "The texture to display fullscreen when fading");
-			renderFading = CustomGUILayout.Toggle ("Draw fade?", renderFading, string.Empty, "If True, the fade texture will be drawn automatically.");
+			renderFading = CustomGUILayout.Toggle ("Draw fade?", renderFading, string.Empty, "If True, the fade effect will be drawn automatically.");
 			if (!renderFading)
 			{
 				EditorGUILayout.HelpBox ("A custom fade effect can be written by hooking into this component's GetFadeTexture and GetFadeAlpha functions.", MessageType.Info);
 			}
+			renderBorders = CustomGUILayout.Toggle ("Draw borders?", renderBorders, string.Empty, "If True, borders will be drawn outside of the playable screen area.");
 
 			#if ALLOW_VR
 			if (UnityEngine.XR.XRSettings.enabled)

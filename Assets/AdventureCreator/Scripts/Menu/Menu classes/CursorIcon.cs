@@ -109,6 +109,7 @@ namespace AC
 		public override void ClearCache ()
 		{
 			cachedLabel = string.Empty;
+			base.ClearCache ();
 		}
 
 

@@ -25,6 +25,7 @@ namespace AC
 
 		protected string hideHeadClip = "HideHead";
 		protected string headDirection;
+		private string clip2DNew;
 
 
 		public override void Declare (AC.Char _character)
@@ -282,15 +283,15 @@ namespace AC
 		
 		public override float ActionCharAnimRun (ActionCharAnim action)
 		{
-			string clip2DNew = action.clip2D;
-			if (action.includeDirection)
-			{
-				clip2DNew += character.GetSpriteDirection ();
-			}
-			
 			if (!action.isRunning)
 			{
 				action.isRunning = true;
+
+				clip2DNew = action.clip2D;
+				if (action.includeDirection)
+				{
+					clip2DNew += character.GetSpriteDirection ();
+				}
 				
 				if (action.method == ActionCharAnim.AnimMethodChar.PlayCustom && !string.IsNullOrEmpty (action.clip2D))
 				{
@@ -483,7 +484,7 @@ namespace AC
 				return;
 			}
 			
-			string clip2DNew = action.clip2D;
+			clip2DNew = action.clip2D;
 			if (action.includeDirection)
 			{
 				clip2DNew += character.GetSpriteDirection ();

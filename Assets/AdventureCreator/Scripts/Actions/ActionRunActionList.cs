@@ -913,6 +913,7 @@ namespace AC
 			newAction.actionList = actionList;
 			newAction.runFromStart = (startingActionIndex <= 0);
 			newAction.jumpToAction = startingActionIndex;
+			newAction.runInParallel = true;
 			return newAction;
 		}
 
@@ -930,6 +931,7 @@ namespace AC
 			newAction.invActionList = actionListAsset;
 			newAction.runFromStart = (startingActionIndex <= 0);
 			newAction.jumpToAction = startingActionIndex;
+			newAction.runInParallel = true;
 			return newAction;
 		}
 

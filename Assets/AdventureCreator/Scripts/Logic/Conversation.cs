@@ -497,6 +497,28 @@ namespace AC
 		}
 
 
+		/** 
+		 * <summary>Checks if all options have been chosen at least once by the player</summary>
+		 * <param name = "onlyEnabled">If True, then only options that are currently enabled will be included in the check</param>
+		 * <returns>True if all options have been chosen at least once by the player</returns>
+		 */
+		public bool AllOptionsBeenChosen (bool onlyEnabled)
+		{
+			foreach (ButtonDialog option in options)
+			{
+				if (!option.hasBeenChosen)
+				{
+					if (onlyEnabled && !option.isOn)
+					{
+						continue;
+					}
+					return false;
+				}
+			}
+			return true;
+		}
+
+
 		/**
 		 * <summary>Turns a dialogue option on, provided that it is unlocked.</summary>
 		 * <param name = "id">The ID number of the dialogue option to enable</param>

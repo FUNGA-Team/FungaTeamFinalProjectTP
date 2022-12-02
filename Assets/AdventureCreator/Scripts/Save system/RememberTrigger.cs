@@ -15,22 +15,26 @@ using UnityEngine;
 namespace AC
 {
 
-	/**
-	 * Attach this script to Trigger objects in the scene whose on/off state you wish to save.
-	 */
+	/** Attach this script to Trigger objects in the scene whose on/off state you wish to save. */
 	[AddComponentMenu("Adventure Creator/Save system/Remember Trigger")]
 	[HelpURL("https://www.adventurecreator.org/scripting-guide/class_a_c_1_1_remember_trigger.html")]
 	public class RememberTrigger : Remember
 	{
 
+		#region Variables
+
 		/** Whether the Trigger should be enabled or not when the game begins */
 		public AC_OnOff startState = AC_OnOff.On;
 
-		private bool loadedData = false;
+		#endregion
 
-		
-		private void Awake ()
+
+		#region UnityStandards
+
+		protected override void Start ()
 		{
+			base.Start ();
+
 			if (loadedData) return;
 
 			if (GameIsPlaying () && isActiveAndEnabled)
@@ -49,7 +53,11 @@ namespace AC
 				}
 			}
 		}
-		
+
+		#endregion
+
+
+		#region PublicFunctions
 
 		/**
 		 * <summary>Serialises appropriate GameObject values into a string.</summary>
@@ -92,7 +100,6 @@ namespace AC
 			TriggerData data = Serializer.LoadScriptData <TriggerData> (stringData);
 			if (data == null)
 			{
-				loadedData = false;
 				return;
 			}
 			SavePrevented = data.savePrevented; if (savePrevented) return;
@@ -113,6 +120,8 @@ namespace AC
 
 			loadedData = true;
 		}
+
+		#endregion
 
 	}
 

@@ -960,10 +960,21 @@ namespace AC
 		private void BottomToolbarGUI (bool isAsset)
 		{
 			bool noList = false;
+			#if AC_ActionListPrefabs
+			bool isPrefab = false;
+			#endif
 
 			if ((isAsset && windowData.targetAsset == null) || (!isAsset && windowData.target == null) || (!isAsset && !windowData.target.gameObject.activeInHierarchy))
 			{
 				noList = true;
+
+				#if AC_ActionListPrefabs
+				if (!isAsset && !windowData.target.gameObject.activeInHierarchy && UnityVersionHandler.IsPrefabFile (windowData.target.gameObject))
+				{
+					noList = false;
+					isPrefab = true;
+				}
+				#endif
 			}
 
 			GUILayout.BeginArea (new Rect (0, position.height - 24, position.width, 24), CustomStyles.Toolbar);
@@ -978,7 +989,16 @@ namespace AC
 			}
 			else
 			{
-				labelText = "Editing " + windowData.target.GetType ().ToString ().Replace ("AC.", "") + ": " + windowData.target.gameObject.name;
+				#if AC_ActionListPrefabs
+				if (isPrefab)
+				{
+					labelText = "Editing " + windowData.target.GetType ().ToString ().Replace ("AC.", "") + " prefab: " + windowData.target.gameObject.name;
+				}
+				else
+				#endif
+				{
+					labelText = "Editing " + windowData.target.GetType ().ToString ().Replace ("AC.", "") + ": " + windowData.target.gameObject.name;
+				}
 			}
 
 			if (GUI.Button (new Rect (10, 0, 18, 18), "", (windowData.isLocked) ? CustomStyles.IconLock : CustomStyles.IconUnlock))
@@ -1406,12 +1426,14 @@ namespace AC
 				OnEnable ();
 				return;
 			}
+			#if !AC_ActionListPrefabs
 			if (!isAsset && UnityVersionHandler.IsPrefabFile (windowData.target.gameObject))
 			{
 				GUILayout.Space (30f);
 				EditorGUILayout.HelpBox ("Scene-based Actions can not live in prefabs - use ActionList assets instead.", MessageType.Info);
 				return;
 			}
+			#endif
 			if (!isAsset && windowData.target != null)
 			{
 				if (windowData.target.source == ActionListSource.AssetFile)
@@ -1919,10 +1941,10 @@ namespace AC
 		{
 			if (NumActionsMarked > 0 || !onlyMarked)
 			{
-				Vector2 maxCorner = (Actions[0]) ? Actions[0].NodeRect.position : Vector2.zero;
+				Vector2 maxCorner = (Actions[0] != null) ? Actions[0].NodeRect.position : Vector2.zero;
 				for (int i=0; i<Actions.Count; i++)
 				{
-					if (Actions[i].isMarked || !onlyMarked)
+					if (Actions[i] != null && (Actions[i].isMarked || !onlyMarked))
 					{
 						maxCorner.x = Mathf.Max (maxCorner.x, Actions[i].NodeRect.x + Actions[i].NodeRect.width);
 						maxCorner.y = Mathf.Max (maxCorner.y, Actions[i].NodeRect.y + Actions[i].NodeRect.height);
@@ -1932,7 +1954,7 @@ namespace AC
 				Vector2 minCorner = maxCorner - new Vector2 (ACEditorPrefs.ActionNodeWidth, 50f);
 				for (int i=0; i<Actions.Count; i++)
 				{
-					if (Actions[i].isMarked || !onlyMarked)
+					if (Actions[i] != null && (Actions[i].isMarked || !onlyMarked))
 					{
 						minCorner.x = Mathf.Min (minCorner.x, Actions[i].NodeRect.x);
 						minCorner.y = Mathf.Min (minCorner.y, Actions[i].NodeRect.y);
@@ -2209,7 +2231,7 @@ namespace AC
 						List<Action> actionsAsList = new List<Action>();
 						foreach (Action action in windowData.targetAsset.actions)
 						{
-							if (action) actionsAsList.Add (action);
+							if (action != null) actionsAsList.Add (action);
 						}
 						actionsArray = actionsAsList.ToArray ();
 					}
@@ -2221,7 +2243,7 @@ namespace AC
 						List<Action> actionsAsList = new List<Action> ();
 						foreach (Action action in windowData.target.actions)
 						{
-							if (action) actionsAsList.Add (action);
+							if (action != null) actionsAsList.Add (action);
 						}
 						actionsArray = actionsAsList.ToArray ();
 					}
@@ -2304,14 +2326,23 @@ namespace AC
 					}
 
 					newAction.isMarked = true;
+					Action addedAction = null;
 
 					if (isAsset)
 					{
-						ActionListAssetEditor.AddAction (newAction, -1, windowData.targetAsset);
+						addedAction = ActionListAssetEditor.AddAction (newAction, -1, windowData.targetAsset);
 					}
 					else
 					{
-						ActionListEditor.AddAction (newAction, -1, windowData.target);
+						addedAction = ActionListEditor.AddAction (newAction, -1, windowData.target);
+					}
+
+					if (newActions.IndexOf (newAction) == newActions.Count - 1)
+					{
+						if (addedAction.endings != null && addedAction.endings.Count > 0)
+						{
+							addedAction.endings[0].resultAction = ResultAction.Stop;
+						}
 					}
 				}
 
@@ -2445,7 +2476,7 @@ namespace AC
 
 								foreach (Action _action in actionList)
 								{
-									if (_action && action != _action)
+									if (_action != null && action != _action)
 									{
 										_action.FixLinkAfterDeleting (action, targetAction, actionList);
 									}
@@ -2634,20 +2665,25 @@ namespace AC
 							}
 
 							newAction.isMarked = true;
+							Action addedAction = null;
 							if (isAsset)
 							{
-								ActionListAssetEditor.AddAction (newAction, offset + ownIndex, windowData.targetAsset);
+								addedAction = ActionListAssetEditor.AddAction (newAction, offset + ownIndex, windowData.targetAsset);
 							}
 							else
 							{
-								ActionListEditor.AddAction (newAction, offset + ownIndex, windowData.target);
+								addedAction = ActionListEditor.AddAction (newAction, offset + ownIndex, windowData.target);
+							}
+
+							if (newActions.IndexOf (newAction) == newActions.Count - 1)
+							{
+								if (addedAction.endings != null && addedAction.endings.Count > 0)
+								{
+									addedAction.endings[0].resultAction = ResultAction.Stop;
+								}
 							}
 						}
 
-						if (action.endings != null && action.endings.Count > 0)
-						{
-							action.endings[0].resultAction = ResultAction.Continue;
-						}
 						break;
 					}
 				}
@@ -2826,6 +2862,22 @@ namespace AC
 					}
 				}
 			}
+			#if UNITY_2019_2_OR_NEWER
+			else if (objString.StartsWith ("BackupAll"))
+			{
+				if (windowData.target)
+				{
+					windowData.target.BackupData ();
+				}
+			}
+			else if (objString.StartsWith ("RestoreAll"))
+			{
+				if (windowData.target)
+				{
+					windowData.target.RestoreData ();
+				}
+			}
+			#endif
 
 			foreach (Action action in actionList)
 			{
@@ -2845,7 +2897,7 @@ namespace AC
 						List<Action> actionsAsList = new List<Action> ();
 						foreach (Action action in windowData.targetAsset.actions)
 						{
-							if (action) actionsAsList.Add (action);
+							if (action != null) actionsAsList.Add (action);
 						}
 						actionsArray = actionsAsList.ToArray ();
 					}
@@ -2857,7 +2909,7 @@ namespace AC
 						List<Action> actionsAsList = new List<Action> ();
 						foreach (Action action in windowData.target.actions)
 						{
-							if (action) actionsAsList.Add (action);
+							if (action != null) actionsAsList.Add (action);
 						}
 						actionsArray = actionsAsList.ToArray ();
 					}

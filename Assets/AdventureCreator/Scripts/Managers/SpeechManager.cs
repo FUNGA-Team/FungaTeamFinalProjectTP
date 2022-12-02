@@ -206,7 +206,7 @@ namespace AC
 		private bool showScrollingAudio = true;
 		private int minOrderValue;
 
-		private int numAdded = 0;
+		private List<SpeechLine> addedLines = new List<SpeechLine> ();
 
 		/** The name of the Menu to display subtitles in when previewing Speech tracks in a Timeline */
 		public string previewMenuName;
@@ -252,6 +252,7 @@ namespace AC
 					displayNarrationForever = CustomGUILayout.ToggleLeft ("Display narration forever until user skips it?", displayNarrationForever, "AC.KickStarter.speechManager.displayNarrationForever", "If true, then narration text will remain on the screen until the player skips it.");
 				}
 
+				
 				if (!displayForever)
 				{
 					syncSubtitlesToAudio = CustomGUILayout.ToggleLeft ("Sync subtitles display with speech audio?", syncSubtitlesToAudio, "AC.KickStarter.speechManager.syncSubtitlesToAudio", "If True, then subtitles with audio will cease to display once the audio has completed.");
@@ -261,10 +262,6 @@ namespace AC
 					}
 					minimumDisplayTime = CustomGUILayout.FloatField ("Minimum display time (s):", minimumDisplayTime, "AC.KickStarter.speechManager.minimumDisplayTime", "The minimum time, in seconds, that a speech line will be displayed (unless an AudioClip is setting its length)");
 					screenTimeFactor = CustomGUILayout.FloatField ("Display time factor:", screenTimeFactor, "AC.KickStarter.speechManager.screenTimeFactor", "The time that speech text will be displayed, divided by the number of characters in the text");
-					if (displayForever)
-					{
-						playAnimationForever = CustomGUILayout.ToggleLeft ("Play talking animations forever until user skips it?", playAnimationForever, "AC.KickStarter.speechManager.playAnimationForever", "If True, then a speaking character will play their talking animation for the whole duration that their speech text is alive");
-					}
 					if (syncSubtitlesToAudio)
 					{
 						EditorGUILayout.Space ();
@@ -312,8 +309,13 @@ namespace AC
 						ifSkipWhileScrolling = (IfSkipWhileScrolling) CustomGUILayout.EnumPopup ("If skip while scrolling:", ifSkipWhileScrolling, "AC.KickStarter.speechManager.ifSkipWhileScrolling", "What action to take if the user attempts to skip speech while it it still scrolling");
 					}
 					allowGameplaySpeechSkipping = CustomGUILayout.ToggleLeft ("Subtitles during gameplay can also be skipped?", allowGameplaySpeechSkipping, "AC.KickStarter.speechManager.allowGameplaySpeechSkipping", "If True, then speech text during gameplay can be skipped by the player left-clicking");
+
+					if (displayForever)
+					{
+						playAnimationForever = CustomGUILayout.ToggleLeft ("Play talking animations forever until user skips it?", playAnimationForever, "AC.KickStarter.speechManager.playAnimationForever", "If True, then a speaking character will play their talking animation for the whole duration that their speech text is alive");
+					}
 				}
-				
+
 				keepTextInBuffer = CustomGUILayout.ToggleLeft ("Retain subtitle text buffer once line has ended?", keepTextInBuffer, "AC.KickStarter.speechManager.keepTextInBuffer", "If True, then the text stored in the speech buffer (in Label menu elements) will not be cleared when no speech text is active");
 				resetExpressionsEachLine = CustomGUILayout.ToggleLeft ("Reset character expression with each line?", resetExpressionsEachLine, "AC.KickStarter.speechManager.resetExpressionsEachLine", "If True, then a character's expression will be reset with each new speech line");
 
@@ -1442,7 +1444,7 @@ namespace AC
 				Undo.RecordObject (this, "Update speech list");
 				
 				int originalLineCount = (lines != null) ? lines.Count : 0;
-				numAdded = 0;
+				addedLines.Clear ();
 
 				// Store the lines temporarily, so that we can update the translations afterwards
 				BackupTranslations ();
@@ -1524,13 +1526,18 @@ namespace AC
 				}
 	
 				int newLineCount = (lines != null) ? lines.Count : 0;
-				int numRemoved = Mathf.Max (originalLineCount + numAdded - newLineCount, 0);
+				int numRemoved = Mathf.Max (originalLineCount + addedLines.Count - newLineCount, 0);
 
 				tempLines = null;
 				CacheDisplayLines ();
 
+				foreach (SpeechLine addedLine in addedLines)
+				{
+					ACDebug.Log ("Added line ID: "+ addedLine.lineID + ", Type: " + addedLine.textType + ", Text: '"  + addedLine.text + "'");
+				}
+
 				EditorUtility.ClearProgressBar ();
-				EditorUtility.DisplayDialog ("Gather game text", "Process complete.\n\n" + newLineCount + " total entries\n" + numAdded + " entries added\n" + numRemoved + " entries removed", "OK");
+				EditorUtility.DisplayDialog ("Gather game text", "Process complete.\n\n" + newLineCount + " total entries\n" + addedLines.Count + " entries added\n" + numRemoved + " entries removed", "OK");
 			}
 
 			if (sceneFiles != null && sceneFiles.Length > 0)
@@ -1595,8 +1602,7 @@ namespace AC
 							// Assign a new ID on creation
 							SpeechLine newLine = new SpeechLine (GetEmptyID (), _scene, translatable.GetOwner (i), textToTranslate, numTranslations, translatable.GetTranslationType (i), translatable.OwnerIsPlayer (i));
 							
-							//lines.Add (newLine);
-							numAdded ++;
+							addedLines.Add (newLine);
 							
 							if (tagID >= 0)
 							{

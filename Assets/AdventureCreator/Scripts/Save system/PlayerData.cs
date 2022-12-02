@@ -715,6 +715,11 @@ namespace AC
 					foreach (ScriptData scriptData in playerScriptData)
 					{
 						RememberData rememberData = SaveSystem.FileFormatHandler.DeserializeObject<RememberData> (scriptData.data);
+						if (string.IsNullOrEmpty (scriptData.data))
+						{
+							Debug.LogWarning ("Invalid Remember data for object ID " + scriptData.objectID + " for Player ID " + playerID);
+							continue;
+						}
 						if (rememberData != null)
 						{
 							CustomGUILayout.MultiLineLabelGUI ("   " + rememberData.GetType ().ToString () + ":", EditorJsonUtility.ToJson (rememberData, true));

@@ -40,7 +40,7 @@ namespace AC
 		{
 			if (menuElement)
 			{
-				if (eventData.button == PointerEventData.InputButton.Right)
+				if (KickStarter.settingsManager.defaultMouseClicks && eventData.button == PointerEventData.InputButton.Right)
 				{
 					menuElement.ProcessClick (menu, slot, MouseState.RightClick);
 				}

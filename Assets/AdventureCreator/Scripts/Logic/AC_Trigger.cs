@@ -49,6 +49,9 @@ namespace AC
 		/** The GameObjects that the Trigger reacts to, if detectionMethod = TriggerDetectionMethod.TransformPosition */
 		public List<GameObject> obsToDetect = new List<GameObject>();
 
+		/** If True, then the Trigger will restart if it is triggered while already running. Otherwise, it will not restart. */
+		public bool canInterruptSelf = true;
+
 		public int gameObjectParameterID = -1;
 
 		protected Collider2D _collider2D;
@@ -270,6 +273,18 @@ namespace AC
 		protected void Interact (GameObject collisionOb)
 		{
 			if (!enabled) return;
+
+			if (AreActionsRunning ())
+			{
+				if (canInterruptSelf)
+				{
+					Kill ();
+				}
+				else
+				{
+					return;
+				}
+			}
 
 			if (cancelInteractions)
 			{

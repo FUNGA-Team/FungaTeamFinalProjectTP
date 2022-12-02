@@ -37,7 +37,7 @@ namespace AC
 		protected int lastClickedCursorID;
 
 		private const int MaxRaycastHits = 5;
-		private RaycastHit[] results = new RaycastHit[MaxRaycastHits];
+		private readonly RaycastHit[] results = new RaycastHit[MaxRaycastHits];
 
 
 		protected void OnEnable ()
@@ -58,14 +58,9 @@ namespace AC
 		}
 
 
-		/**
-		 * Updates the interaction handler.
-		 * This is called every frame by StateHandler.
-		 */
+		/** Updates the interaction handler. This is called every frame by StateHandler. */
 		public void UpdateInteraction ()
 		{
-			HotspotLayerMask = 1 << LayerMask.NameToLayer (KickStarter.settingsManager.hotspotLayer);
-
 			if (KickStarter.stateHandler.IsInGameplay ())	
 			{
 				if (KickStarter.playerInput.GetDragState () == DragState.Moveable)
@@ -177,6 +172,7 @@ namespace AC
 		{
 			if (KickStarter.settingsManager.interactionMethod == AC_InteractionMethod.CustomScript)
 			{
+				CustomScriptMethod ();
 				return;
 			}
 
@@ -248,6 +244,11 @@ namespace AC
 		{
 			hotspot = manualHotspot = _hotspot;
 
+			if (hotspot)
+			{
+				lastHotspot = hotspot;
+			}
+
 			if (KickStarter.settingsManager.hotspotDetection != HotspotDetection.CustomScript)
 			{
 				ACDebug.LogWarning ("The 'Hotspot detection method' setting must be set to 'Custom Script' in order for Hotspots to be set active manually.");
@@ -289,7 +290,7 @@ namespace AC
 						}
 						else
 						{
-							return (CheckHotspotValid (KickStarter.player.hotspotDetector.GetSelected ()));
+							return CheckHotspotValid (KickStarter.player.hotspotDetector.GetSelected ());
 						}
 					}
 					else
@@ -443,7 +444,7 @@ namespace AC
 					return;
 				}
 
-				if (KickStarter.playerInput.GetMouseState () == MouseState.HeldDown && KickStarter.playerInput.GetDragState () == DragState.Player)
+				if (KickStarter.playerInput.GetMouseState () == MouseState.HeldDown && KickStarter.playerInput.GetDragState () == DragState.Player && KickStarter.settingsManager.disableHotspotsWhileDraggingPlayer)
 				{
 					// Disable hotspots while dragging player
 					DeselectHotspot (false);
@@ -623,9 +624,27 @@ namespace AC
 					}
 				}
 			}
-			
 		}
 		
+
+		protected void CustomScriptMethod ()
+		{
+			if (KickStarter.settingsManager.hotspotDetection != HotspotDetection.CustomScript)
+			{
+				Hotspot newHotspot = CheckForHotspots ();
+				if (hotspot && newHotspot == null)
+				{
+					DeselectHotspot (false);
+				}
+				else if (newHotspot && newHotspot != hotspot)
+				{
+					DeselectHotspot (false);
+					lastHotspot = hotspot = newHotspot;
+					hotspot.Select ();
+				}
+			}
+		}
+
 		
 		protected void ContextSensitiveClick_Process (bool doubleTap, Hotspot newHotspot)
 		{
@@ -635,7 +654,7 @@ namespace AC
 			}
 			else if (newHotspot)
 			{
-				if (KickStarter.playerInput.GetMouseState () == MouseState.HeldDown && KickStarter.playerInput.GetDragState () == DragState.Player)
+				if (KickStarter.playerInput.GetMouseState () == MouseState.HeldDown && KickStarter.playerInput.GetDragState () == DragState.Player && KickStarter.settingsManager.disableHotspotsWhileDraggingPlayer)
 				{
 					// Disable hotspots while dragging player
 					DeselectHotspot (false); 
@@ -947,11 +966,6 @@ namespace AC
 				return;
 			}
 			
-			if (KickStarter.player)
-			{
-				KickStarter.player.EndPath ();
-			}
-			
 			if (KickStarter.settingsManager.interactionMethod == AC_InteractionMethod.ChooseHotspotThenInteraction && KickStarter.settingsManager.selectInteractions == SelectInteractions.CyclingCursorAndClickingHotspot)
 			{
 				if (KickStarter.settingsManager.autoCycleWhenInteract)
@@ -1116,6 +1130,11 @@ namespace AC
 			
 			if (KickStarter.player)
 			{
+				if (button != null && (button.playerAction == PlayerAction.DoNothing || button.playerAction == PlayerAction.TurnToFace))
+				{
+					KickStarter.player.EndPath ();
+				}
+
 				if (button != null && (button.playerAction == PlayerAction.WalkToMarker || button.playerAction == PlayerAction.WalkTo))
 				{
 					if (!KickStarter.player.AllDirectionsLocked ())
@@ -1175,6 +1194,12 @@ namespace AC
 					
 					if (button.playerAction == PlayerAction.WalkToMarker && _hotspot.walkToMarker)
 					{
+						bool skipSnapping = false;
+						if (button.playerAction == PlayerAction.WalkToMarker && !button.isBlocking && doSnap)
+						{
+							skipSnapping = button.doubleClickDoesNotSnapPlayerToMarker;
+						}
+
 						if (!KickStarter.player.AllDirectionsLocked () && Vector3.Distance (KickStarter.player.Transform.position, _hotspot.walkToMarker.Position) > KickStarter.settingsManager.GetDestinationThreshold ())
 						{
 							if (KickStarter.navigationManager)
@@ -1212,7 +1237,10 @@ namespace AC
 							{
 								if (doSnap)
 								{
-									KickStarter.player.Teleport (targetPos);
+									if (!skipSnapping)
+									{
+										KickStarter.player.Teleport (targetPos);
+									}
 									break;
 								}
 								yield return new WaitForFixedUpdate ();
@@ -1231,11 +1259,14 @@ namespace AC
 							{
 								if (doSnap)
 								{
-									KickStarter.player.SetLookDirection (lookVector, true);
+									if (!skipSnapping)
+									{
+										KickStarter.player.SetLookDirection (lookVector, true);
+									}
 									break;
 								}
 
-								yield return new WaitForEndOfFrame ();			
+								yield return new WaitForEndOfFrame ();
 							}
 						}
 					}
@@ -2274,7 +2305,11 @@ namespace AC
 			}
 			get
 			{
-				 return hotspotLayerMask;
+				if (hotspotLayerMask.value == 0)
+				{
+					hotspotLayerMask = 1 << LayerMask.NameToLayer (KickStarter.settingsManager.hotspotLayer);
+				}
+				return hotspotLayerMask;
 			}
 		}
 

@@ -52,6 +52,7 @@ namespace AC
 			public int movieURLParameterID = -1;
 			#else
 			public VideoClip newClip;
+			public int newClipParameterID = -1;
 			#endif
 			protected bool isPaused;
 
@@ -80,6 +81,8 @@ namespace AC
 
 				#if UNITY_WEBGL
 				movieURL = AssignString (parameters, movieURLParameterID, movieURL);
+				#else
+				newClip = (VideoClip) AssignObject<VideoClip> (parameters, newClipParameterID, newClip);
 				#endif
 
 			waitedAtLeastOneFrame = false;
@@ -323,7 +326,11 @@ namespace AC
 						movieURL = EditorGUILayout.TextField ("Movie URL:", movieURL);
 					}
 					#else
-					newClip = (VideoClip) EditorGUILayout.ObjectField ("New Clip (optional):", newClip, typeof (VideoClip), true);
+					newClipParameterID = Action.ChooseParameterGUI ("New clip (optional):", parameters, newClipParameterID, ParameterType.UnityObject);
+					if (newClipParameterID < 0)
+					{
+						newClip = (VideoClip) EditorGUILayout.ObjectField ("New Clip (optional):", newClip, typeof (VideoClip), true);
+					}
 					#endif
             
 					prepareOnly = EditorGUILayout.Toggle ("Prepare only?", prepareOnly);

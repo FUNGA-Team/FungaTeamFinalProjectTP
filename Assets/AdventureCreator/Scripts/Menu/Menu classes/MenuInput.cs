@@ -243,16 +243,8 @@ namespace AC
 		{
 			if (uiInput)
 			{
-				if (uiInput.textComponent)
-				{
-					return uiInput.textComponent.text;
-				}
-				else
-				{
-					ACDebug.LogWarning (uiInput.gameObject.name + " has no Text component");
-				}
+				return uiInput.text;
 			}
-
 			return label;
 		}
 
@@ -265,7 +257,7 @@ namespace AC
 		{
 			label = _label;
 
-			if (uiInput && uiInput.textComponent)
+			if (uiInput)
 			{
 				uiInput.text = _label;
 			}

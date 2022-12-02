@@ -18,9 +18,7 @@ using UnityEditor;
 namespace AC
 {
 
-	/**
-	 * This script allows the cursor to be rendered using a Unity UI canvas, allowing for advanced effects such as custom animation.
-	 */
+	/** This script allows the cursor to be rendered using a Unity UI canvas, allowing for advanced effects such as custom animation. */
 	[AddComponentMenu ("Adventure Creator/UI/Unity UI cursor")]
 	[HelpURL ("https://www.adventurecreator.org/scripting-guide/class_a_c_1_1_unity_u_i_cursor.html")]
 	[RequireComponent (typeof (Canvas))]
@@ -35,6 +33,11 @@ namespace AC
 		[SerializeField] private bool updateImageNativeSize = true;
 		[SerializeField] private RectTransform rectTransformToPosition = null;
 		private CanvasScaler rootCanvasScaler;
+		#if TextMeshProIsPresent
+		public TMPro.TextMeshProUGUI itemCountText;
+		#else
+		public Text itemCountText;
+		#endif
 		
 		[Header ("Animation (Optional)")]
 		[SerializeField] private Animator _animator = null;
@@ -51,6 +54,7 @@ namespace AC
 		private void OnEnable ()
 		{
 			EventManager.OnSetHardwareCursor += OnSetHardwareCursor;
+			EventManager.OnInventoryDeselect += OnInventoryDeselect;
 			GetComponent<Canvas> ().sortingOrder = 100;
 			rootCanvasScaler = GetComponent<CanvasScaler> ();
 		}
@@ -58,6 +62,7 @@ namespace AC
 
 		private void OnDisable ()
 		{
+			EventManager.OnInventoryDeselect -= OnInventoryDeselect;
 			EventManager.OnSetHardwareCursor -= OnSetHardwareCursor;
 		}
 
@@ -101,12 +106,29 @@ namespace AC
 
 				rectTransformToPosition.localPosition = new Vector3 ((_position.x - (Screen.width / 2f)) / scalerOffset, (_position.y - (Screen.height / 2f)) / scalerOffset, rectTransformToPosition.localPosition.z);
 			}
+
+			if (itemCountText && InvInstance.IsValid (KickStarter.runtimeInventory.SelectedInstance))
+			{
+				itemCountText.text = KickStarter.runtimeInventory.SelectedInstance.GetInventoryDisplayCount ().ToString ();
+			}
 		}
 
 		#endregion
 
 
 		#region CustomEvents
+
+		private void OnInventoryDeselect (InvItem invItem)
+		{
+			if (KickStarter.cursorManager.inventoryHandling == InventoryHandling.ChangeCursor || KickStarter.cursorManager.inventoryHandling == InventoryHandling.ChangeCursorAndHotspotLabel)
+			{
+				if (KickStarter.cursorManager.cursorDisplay == CursorDisplay.Never)
+				{
+					OnSetHardwareCursor (null, Vector2.zero);
+				}
+			}
+		}
+
 
 		private void OnSetHardwareCursor (Texture2D texture, Vector2 clickOffset)
 		{
@@ -160,6 +182,12 @@ namespace AC
 			rectTransformToPosition = (RectTransform) CustomGUILayout.ObjectField <RectTransform> ("RectTransform to position:", rectTransformToPosition, true, string.Empty, "The RectTransform component to control as the cursor's intended position");
 
 			_animator = (Animator) CustomGUILayout.ObjectField<Animator> ("Animator:", _animator, true, string.Empty, "An Animator that can optionally be updated");
+
+			#if TextMeshProIsPresent
+			itemCountText = (TMPro.TextMeshProUGUI) CustomGUILayout.ObjectField<TMPro.TextMeshProUGUI> ("Item count Text:", itemCountText, false, string.Empty, "A Text component to display the selected inventory item's Count text");
+			#else
+			itemCountText = (Text) CustomGUILayout.ObjectField<Text> ("Item count Text:", itemCountText, false, string.Empty, "A Text component to display the selected inventory item's Count text");
+			#endif
 
 			CustomGUILayout.EndVertical ();
 

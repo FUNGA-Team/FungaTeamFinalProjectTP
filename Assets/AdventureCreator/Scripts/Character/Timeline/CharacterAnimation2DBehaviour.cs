@@ -157,13 +157,13 @@ namespace AC
 			{
 				if (enable)
 				{
-					character.ActiveCharacterAnimation2DShot = activeShot;
+					character.ActiveCharacterAnimationShot = activeShot;
 				}
 				else
 				{
-					if (character.ActiveCharacterAnimation2DShot == activeShot)
+					if (character.ActiveCharacterAnimationShot == activeShot)
 					{
-						character.ActiveCharacterAnimation2DShot = null;
+						character.ActiveCharacterAnimationShot = null;
 					}
 				}
 			}

@@ -707,6 +707,7 @@ namespace AC
 					}
 
 					KickStarter.player.isRunning = KickStarter.playerInput.IsPlayerControlledRunning ();
+					if (isFirstPerson && moveKeys.y < 0f && !KickStarter.player.canRunInReverse) KickStarter.player.isRunning = false;
 					KickStarter.player.charState = CharState.Move;
 
 					if (isFirstPerson)
@@ -772,7 +773,7 @@ namespace AC
 				}
 				else if (moveKeys.y < 0f)
 				{
-					KickStarter.player.isRunning = KickStarter.playerInput.IsPlayerControlledRunning ();
+					KickStarter.player.isRunning = KickStarter.player.canRunInReverse && KickStarter.playerInput.IsPlayerControlledRunning ();
 					KickStarter.player.charState = CharState.Move;
 					KickStarter.player.SetMoveDirectionAsBackward ();
 				}
@@ -1140,6 +1141,12 @@ namespace AC
 
 		protected void PointMovePlayer (Vector3[] pointArray, bool run)
 		{
+			if (KickStarter.player.AllDirectionsLocked ())
+			{
+				ACDebug.LogWarning ("Cannot move the Player because their Movement has been locked.");
+				return;
+			}
+
 			KickStarter.eventManager.Call_OnPointAndClick (pointArray, run);
 			KickStarter.player.MoveAlongPoints (pointArray, run);
 		}

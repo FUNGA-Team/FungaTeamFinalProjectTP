@@ -202,7 +202,7 @@ namespace AC
 				return;
 			}
 
-			if (allowMouseWheelZooming && Camera)
+			if (allowMouseWheelZooming && Camera && KickStarter.mainCamera && KickStarter.mainCamera.attachedCamera == this)
 			{
 				float scrollWheelInput = KickStarter.playerInput.InputGetAxis ("Mouse ScrollWheel");
 				if (scrollWheelInput > 0f)

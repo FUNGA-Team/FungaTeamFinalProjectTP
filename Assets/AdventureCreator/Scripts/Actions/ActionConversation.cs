@@ -28,6 +28,8 @@ namespace AC
 		public Conversation conversation;
 		protected Conversation runtimeConversation;
 
+		[SerializeField] private List<int> overrideOptionSocketIDs = new List<int> ();
+
 		public bool overrideOptions = false;
 		protected ActionList parentActionList;
 		#if UNITY_EDITOR
@@ -93,6 +95,11 @@ namespace AC
 					LogWarning ("Cannot find DialogList element " + runtimeContainerElementName + " inside Menu " + runtimeMenuName);
 				}
 			}
+
+			if (overrideOptions && parameterID < 0 && runtimeConversation)
+			{
+				UpdateSocketIDs (runtimeConversation);
+			}
 		}
 
 		
@@ -100,6 +107,7 @@ namespace AC
 		{
 			if (runtimeConversation == null)
 			{
+				LogWarning ("Cannot start conversation - no Conversation assigned");
 				return 0f;
 			}
 
@@ -180,6 +188,7 @@ namespace AC
 
 				if (overrideOptions)
 				{
+					UpdateSocketIDs (conversation);
 					numSockets = conversation.options.Count;
 				}
 				else
@@ -301,6 +310,68 @@ namespace AC
 		}
 
 		#endif
+		
+
+		private void UpdateSocketIDs (Conversation _conversation)
+		{
+			List<int> newOverrideOptionSocketIDs = new List<int> ();
+			for (int i = 0; i < _conversation.options.Count; i++)
+			{
+				int newOptionID = _conversation.options[i].ID;
+				if (!newOverrideOptionSocketIDs.Contains (newOptionID))
+				{
+					newOverrideOptionSocketIDs.Add (newOptionID);
+				}
+			}
+
+			if (overrideOptionSocketIDs == null || overrideOptionSocketIDs.Count == 0)
+			{
+				overrideOptionSocketIDs = newOverrideOptionSocketIDs;
+			}
+			else
+			{
+				// Deleted options since last check?
+				for (int i = 0; i < overrideOptionSocketIDs.Count; i++)
+				{
+					if (!newOverrideOptionSocketIDs.Contains (overrideOptionSocketIDs[i]))
+					{
+						overrideOptionSocketIDs.RemoveAt (i);
+						endings.RemoveAt (i);
+						i = -1;
+					}
+				}
+
+				// Added options since last check?
+				for (int i = 0; i < newOverrideOptionSocketIDs.Count; i++)
+				{
+					if (!overrideOptionSocketIDs.Contains (newOverrideOptionSocketIDs[i]))
+					{
+						overrideOptionSocketIDs.Add (newOverrideOptionSocketIDs[i]);
+						endings.Add (new ActionEnd (true));
+						i = -1;
+					}
+				}
+
+				// Now lists should contain same IDs (but order may differ)
+				for (int i = 0; i < newOverrideOptionSocketIDs.Count; i++)
+				{
+					int newOptionID = newOverrideOptionSocketIDs[i];
+					if (overrideOptionSocketIDs[i] != newOptionID)
+					{
+						int oldIndex = overrideOptionSocketIDs.IndexOf (newOptionID);
+						if (oldIndex > i)
+						{
+							overrideOptionSocketIDs.RemoveAt (oldIndex);
+							overrideOptionSocketIDs.Insert (i, newOptionID);
+							ActionEnd oldEnding = new ActionEnd (endings[oldIndex]);
+							endings.RemoveAt (oldIndex);
+							endings.Insert (i, oldEnding);
+							i = -1;
+						}
+					}
+				}
+			}
+		}
 
 
 		/**

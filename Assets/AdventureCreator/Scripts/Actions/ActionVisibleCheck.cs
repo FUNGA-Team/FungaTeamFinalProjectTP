@@ -46,14 +46,14 @@ namespace AC
 		{
 			if (runtimeObToAffect)
 			{
-				SpriteFader _spriteFader = runtimeObToAffect.GetComponent <SpriteFader>();
-				if (_spriteFader != null && _spriteFader.GetAlpha () <= 0f)
+				SpriteFader _spriteFader = runtimeObToAffect.GetComponent<SpriteFader> ();
+				if (_spriteFader && _spriteFader.GetAlpha () <= 0f)
 				{
 					return false;
 				}
 
-				Renderer _renderer = runtimeObToAffect.GetComponent <Renderer>();
-				if (_renderer != null)
+				Renderer _renderer = runtimeObToAffect.GetComponent<Renderer> ();
+				if (_renderer)
 				{
 					switch (checkVisState)
 					{
@@ -67,6 +67,21 @@ namespace AC
 							break;
 					}
 				}
+
+				Canvas _canvas = runtimeObToAffect.GetComponent<Canvas> ();
+				if (_canvas)
+				{
+					return _canvas.enabled;
+				}
+
+				#if UNITY_2019_4_OR_NEWER
+				CanvasGroup canvasGroup = runtimeObToAffect.GetComponent<CanvasGroup> ();
+				if (canvasGroup)
+				{
+					return !(canvasGroup.enabled && canvasGroup.alpha <= 0f);
+				}
+				#endif
+
 				ACDebug.LogWarning ("Cannot check visibility of " + runtimeObToAffect.name + " as it has no renderer component", runtimeObToAffect);
 			}
 			return false;

@@ -75,6 +75,12 @@ namespace AC
 		protected Vector2 lastMousePosition;
 		protected Vector2 noInput = Vector2.zero;
 
+		/** If set, then the sprite's bounds will be used to set the horizontal and vertical limits, overriding constrainHorizontal and constrainVertical */
+		public SpriteRenderer backgroundConstraint = null;
+		/** If True, and backgroundConstraint is set, then the camera will zoom in to fit the background if it is too zoomed out to fit */
+		public bool autoScaleToFitBackgroundConstraint = false;
+		private float lastOrthographicSize = 0f;
+
 		#endregion
 
 
@@ -95,8 +101,27 @@ namespace AC
 		}
 
 
+		protected override void OnEnable ()
+		{
+			base.OnEnable ();
+			EventManager.OnUpdatePlayableScreenArea += OnUpdatePlayableScreenArea;
+		}
+
+
+		protected override void OnDisable ()
+		{
+			EventManager.OnUpdatePlayableScreenArea -= OnUpdatePlayableScreenArea;
+			base.OnDisable ();
+		}
+
+
 		public override void _Update ()
 		{
+			if (Camera && Camera.orthographicSize != lastOrthographicSize)
+			{
+				UpdateBackgroundConstraint ();
+			}
+
 			inputMovement = GetInputVector ();
 
 			if (xLock != RotationLock.Locked)
@@ -297,6 +322,98 @@ namespace AC
 		protected void SetOriginalPosition ()
 		{
 			originalPosition = Transform.position;
+		}
+
+
+		protected void UpdateBackgroundConstraint ()
+		{
+			lastOrthographicSize = Camera.orthographicSize;
+			if (backgroundConstraint == null || Camera == null || !Camera.orthographic) return;
+			if (xLock != RotationLock.Limited && yLock != RotationLock.Limited) return;
+
+			Camera.enabled = true;
+
+			Rect originalRect = Camera.pixelRect;
+			if (KickStarter.CameraMain)
+			{
+				Camera.pixelRect = KickStarter.CameraMain.pixelRect;
+			}
+
+			Vector3 bottomLeftWorldPosition = Camera.ViewportToWorldPoint (new Vector3 (0f, 0f, Camera.nearClipPlane));
+			Vector3 topRightWorldPosition = Camera.ViewportToWorldPoint (new Vector3 (1f, 1f, Camera.nearClipPlane));
+			Camera.pixelRect = originalRect;
+
+			Vector2 bottomLeftOffset = new Vector2 (Transform.position.x - bottomLeftWorldPosition.x, Transform.position.y - bottomLeftWorldPosition.y);
+			Vector2 topRightOffset = new Vector2 (Transform.position.x - topRightWorldPosition.x, Transform.position.y - topRightWorldPosition.y);
+
+			if (xLock == RotationLock.Limited)
+			{
+				Vector2 hLimits = new Vector2 (bottomLeftOffset.x + backgroundConstraint.bounds.min.x, topRightOffset.x + backgroundConstraint.bounds.max.x);
+				minX = hLimits.x; maxX = hLimits.y;
+
+				float scaleFactor = (topRightWorldPosition.x - bottomLeftWorldPosition.x) / backgroundConstraint.bounds.size.x;
+				if (scaleFactor > 1f)
+				{
+					minX = maxX = backgroundConstraint.bounds.center.x;
+					if (autoScaleToFitBackgroundConstraint)
+					{
+						ACDebug.Log ("GameCamera2D '" + gameObject.name + "' is zoomed out to much to fit the Horizontal background constraint - zooming in to compensate.", this);
+						Camera.orthographicSize /= scaleFactor;
+						lastOrthographicSize = Camera.orthographicSize;
+
+						if (KickStarter.CameraMain)
+						{
+							Camera.pixelRect = KickStarter.CameraMain.pixelRect;
+						}
+
+						bottomLeftWorldPosition = Camera.ViewportToWorldPoint (new Vector3 (0f, 0f, Camera.nearClipPlane));
+						topRightWorldPosition = Camera.ViewportToWorldPoint (new Vector3 (1f, 1f, Camera.nearClipPlane));
+						Camera.pixelRect = originalRect;
+
+						bottomLeftOffset = new Vector2 (Transform.position.x - bottomLeftWorldPosition.x, Transform.position.y - bottomLeftWorldPosition.y);
+						topRightOffset = new Vector2 (Transform.position.x - topRightWorldPosition.x, Transform.position.y - topRightWorldPosition.y);
+					}
+					else
+					{
+						ACDebug.LogWarning ("Cannot properly set Horizontal constraint for GameCamera2D '" + gameObject.name + "' because the assigned background's width is less than the screen's width.", this);
+					}
+				}
+			}
+
+			if (yLock == RotationLock.Limited)
+			{
+				Vector2 vLimits = new Vector2 (bottomLeftOffset.y + backgroundConstraint.bounds.min.y, topRightOffset.y + backgroundConstraint.bounds.max.y);
+				minY = vLimits.x; maxY = vLimits.y;
+
+				float scaleFactor = (topRightWorldPosition.y - bottomLeftWorldPosition.y) / backgroundConstraint.bounds.size.y;
+				if (scaleFactor > 1f)
+				{
+					minY = maxY = backgroundConstraint.bounds.center.y;
+					if (autoScaleToFitBackgroundConstraint)
+					{
+						ACDebug.Log ("GameCamera2D '" + gameObject.name + "' is zoomed out to much to fit the Vertical background constraint - zooming in to compensate.", this);
+						Camera.orthographicSize /= scaleFactor;
+						lastOrthographicSize = Camera.orthographicSize;
+					}
+					else
+					{
+						ACDebug.LogWarning ("Cannot properly set Vertical constraint for GameCamera2D '" + gameObject.name + "' because the assigned background's height is less than the screen's height.", this);
+					}
+				}
+			}
+
+			MoveCameraInstant ();
+			Camera.enabled = false;
+		}
+
+		#endregion
+
+
+		#region CustomEvents
+
+		protected void OnUpdatePlayableScreenArea ()
+		{
+			UpdateBackgroundConstraint ();
 		}
 
 		#endregion

@@ -80,8 +80,12 @@ namespace AC
 		}
 
 
-		/** A Constructor that populates itself based on an existing list of inventory item instances. */
-		public InvCollection (List<InvInstance> _invInstances)
+		/**
+		 * <summary>A Constructor that populates itself based on an existing list of inventory item instances.</summary>
+		 * <param name="_invInstances">A List of InvInstances that represent the items to be added</param>
+		 * <param name="allowEmptySlots">If True, then invalid or empty entries in the _invInstances List will be included and used to add empty slots, rather than removed</param>
+		 */
+		public InvCollection (List<InvInstance> _invInstances, bool allowEmptySlots = false)
 		{
 			maxSlots = 0;
 			limitToCategoryIDs = null;
@@ -89,7 +93,23 @@ namespace AC
 
 			foreach (InvInstance invInstance in _invInstances)
 			{
-				AddToEnd (invInstance);
+				if (allowEmptySlots)
+				{
+					if (InvInstance.IsValid (invInstance))
+					{
+						InvInstance addedInstance = new InvInstance (invInstance);
+						invInstances.Add (addedInstance);
+						KickStarter.eventManager.Call_OnChangeInventory (this, addedInstance, InventoryEventType.Add);
+					}
+					else
+					{
+						invInstances.Add (null);
+					}
+				}
+				else
+				{
+					AddToEnd (invInstance);
+				}
 			}
 
 			Clean ();
@@ -267,31 +287,67 @@ namespace AC
 			InvCollection fromCollection = addInstance.GetSource ();
 
 			InvInstance addedInstance = null;
-			for (int i=0; i<invInstances.Count; i++)
+
+			for (int i = 0; i < invInstances.Count; i++)
 			{
-				// Inside
-				
-				if (!InvInstance.IsValid (invInstances[i]))
-				{
-					// Empty slot
-					invInstances[i] = addInstance.CreateTransferInstance ();
-					if (KickStarter.eventManager) KickStarter.eventManager.Call_OnChangeInventory (this, invInstances[i], InventoryEventType.Add);
-					addedInstance = invInstances[i];
-					break;
-				}
-				else if (invInstances[i] == addInstance)
-				{
-					// Same
-				}
-				else if (invInstances[i].InvItem == addInstance.InvItem && addInstance.InvItem.canCarryMultiple && invInstances[i].Capacity > 0)
+				// First find existing
+
+				if (InvInstance.IsValid (invInstances[i]) && invInstances[i] != addInstance && invInstances[i].InvItem == addInstance.InvItem && addInstance.InvItem.canCarryMultiple && invInstances[i].Capacity > 0)
 				{
 					// Merge
-					if (addInstance.TransferCount > invInstances[i].Capacity) addInstance.TransferCount = invInstances[i].Capacity;
+					bool transferredAll = true;
+					if (addInstance.TransferCount > invInstances[i].Capacity)
+					{
+						addInstance.TransferCount = invInstances[i].Capacity;
+						transferredAll = false;
+					}
 					int numAdded = Mathf.Min (addInstance.CreateTransferInstance ().Count, invInstances[i].Capacity);
 					invInstances[i].Count += numAdded;
 					if (KickStarter.eventManager) KickStarter.eventManager.Call_OnChangeInventory (this, invInstances[i], InventoryEventType.Add, numAdded);
-					addedInstance = invInstances[i];
-					break;
+					if (transferredAll)
+					{
+						addedInstance = invInstances[i];
+						break;
+					}
+				}
+			}
+
+			if (!InvInstance.IsValid (addedInstance))
+			{
+				for (int i=0; i<invInstances.Count; i++)
+				{
+					// Inside
+				
+					if (!InvInstance.IsValid (invInstances[i]))
+					{
+						// Empty slot
+						invInstances[i] = addInstance.CreateTransferInstance ();
+						if (KickStarter.eventManager) KickStarter.eventManager.Call_OnChangeInventory (this, invInstances[i], InventoryEventType.Add);
+						addedInstance = invInstances[i];
+						break;
+					}
+					else if (invInstances[i] == addInstance)
+					{
+						// Same
+					}
+					else if (invInstances[i].InvItem == addInstance.InvItem && addInstance.InvItem.canCarryMultiple && invInstances[i].Capacity > 0)
+					{
+						// Merge
+						bool transferredAll = true;
+						if (addInstance.TransferCount > invInstances[i].Capacity)
+						{
+							addInstance.TransferCount = invInstances[i].Capacity;
+							transferredAll = false;
+						}
+						int numAdded = Mathf.Min (addInstance.CreateTransferInstance ().Count, invInstances[i].Capacity);
+						invInstances[i].Count += numAdded;
+						if (KickStarter.eventManager) KickStarter.eventManager.Call_OnChangeInventory (this, invInstances[i], InventoryEventType.Add, numAdded);
+						if (transferredAll)
+						{
+							addedInstance = invInstances[i];
+							break;
+						}
+					}
 				}
 			}
 
@@ -370,7 +426,7 @@ namespace AC
 
 			int numAdded = -1;
 
-			InvCollection fromCollection = (Contains (addInstance)) ? this : addInstance.GetSource ();
+			InvCollection fromCollection = Contains (addInstance) ? this : addInstance.GetSource ();
 			if (index >= 0 && index < invInstances.Count)
 			{
 				// Inside
@@ -1131,8 +1187,20 @@ namespace AC
 				}
 			}
 
-			if (maxSlots > 0 && invInstances.Count >= maxSlots)
+			if (maxSlots > 0 && invInstances.Count >= maxSlots && ItemIsInEverySlot ())
 			{
+				if (slot < 0)
+				{
+					for (int i = 0; i < invInstances.Count; i++)
+					{
+						InvInstance existingInstance = invInstances[i];
+						if (InvInstance.IsValid (existingInstance) && existingInstance.InvItem == invInstance.InvItem && invInstance.InvItem.canCarryMultiple && existingInstance.Capacity >= invInstance.TransferCount)
+						{
+							return true;
+						}
+					}
+				}
+
 				// Full
 				switch (occupiedSlotBehaviour)
 				{
@@ -1145,6 +1213,19 @@ namespace AC
 				}
 			}
 
+			return true;
+		}
+
+
+		private bool ItemIsInEverySlot ()
+		{
+			for (int i = 0; i < invInstances.Count; i++)
+			{
+				if (!InvInstance.IsValid (invInstances[i]))
+				{
+					return false;
+				}
+			}
 			return true;
 		}
 
@@ -1248,9 +1329,17 @@ namespace AC
 			{
 				return true;
 			}
-			if (KickStarter.runtimeInventory && KickStarter.runtimeInventory.CraftingInvCollection == this)
+
+			if (KickStarter.runtimeInventory)
 			{
-				return true;
+				InvCollection[] craftingInvCollections = KickStarter.runtimeInventory.CraftingInvCollections;
+				foreach (InvCollection craftingInvCollection in craftingInvCollections)
+				{
+					if (craftingInvCollection == this)
+					{
+						return true;
+					}
+				}
 			}
 			return false;
 		}
@@ -1314,7 +1403,7 @@ namespace AC
 				}
 			}
 
-			return new InvCollection (invInstances);
+			return new InvCollection (invInstances, true);
 		}
 
 		#endregion

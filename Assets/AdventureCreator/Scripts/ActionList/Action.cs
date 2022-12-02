@@ -28,7 +28,7 @@ namespace AC
 	 */
 	[System.Serializable]
 	#if AC_ActionListPrefabs
-	abstract public class Action, iActionListAssetReferencer, IVariableReferencerAction
+	abstract public class Action : iActionListAssetReferencer, IVariableReferencerAction
 	#else
 	abstract public class Action : ScriptableObject, iActionListAssetReferencer, IVariableReferencerAction
 	#endif
@@ -173,9 +173,7 @@ namespace AC
 		}
 
 
-		/**
-		 * Runs the Action instantaneously.
-		 */
+		/** Runs the Action instantaneously. */
 		public virtual void Skip ()
 		{
 			Run ();
@@ -431,7 +429,7 @@ namespace AC
 			{
 				if (endings[0].resultAction == ResultAction.Continue)
 				{
-					if (actions.Count > i + 1 && actions[i + 1])
+					if (actions.Count > i + 1 && actions[i + 1] != null)
 					{
 						AdvGame.DrawNodeCurve (new Rect (NodeRect.position - scrollPosition, NodeRect.size),
 											   new Rect (actions[i + 1].NodeRect.position - scrollPosition, actions[i + 1].NodeRect.size),
@@ -460,7 +458,7 @@ namespace AC
 
 				if (ending.resultAction == ResultAction.Continue)
 				{
-					if (actions.Count > i + 1 && actions[i + 1])
+					if (actions.Count > i + 1 && actions[i + 1] != null)
 					{
 						AdvGame.DrawNodeCurve (new Rect (NodeRect.position - scrollPosition, NodeRect.size),
 											   new Rect (actions[i + 1].NodeRect.position - scrollPosition, actions[i + 1].NodeRect.size),
@@ -967,7 +965,7 @@ namespace AC
 
 		private static bool ObjectIsInScene (GameObject gameObject)
 		{
-			return gameObject.activeInHierarchy && !UnityVersionHandler.IsPrefabEditing (gameObject);
+			return gameObject != null && gameObject.activeInHierarchy && !UnityVersionHandler.IsPrefabEditing (gameObject);
 		}
 
 
@@ -1747,7 +1745,7 @@ namespace AC
 
 					if (file == null && parameter.gameObject && parameter.intValue != -1 && doLog)
 					{
-						ACDebug.LogWarning ("No " + typeof(T) + " component attached to " + parameter.gameObject + "!", parameter.gameObject);
+						LogWarning ("No " + typeof(T) + " component attached to " + parameter.gameObject + "!", parameter.gameObject);
 					}
 				}
 				if (file == null)
@@ -1762,7 +1760,7 @@ namespace AC
 					}
 					if (doLog && file == null && parameter.gameObject && parameter.gameObject.GetComponent<T> () == null)
 					{
-						ACDebug.LogWarning ("No " + typeof (T) + " component attached to " + parameter.gameObject + "!", parameter.gameObject);
+						LogWarning ("No " + typeof (T) + " component attached to " + parameter.gameObject + "!", parameter.gameObject);
 					}
 				}
 			}

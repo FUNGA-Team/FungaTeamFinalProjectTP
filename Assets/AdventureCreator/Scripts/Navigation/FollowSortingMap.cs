@@ -43,7 +43,7 @@ namespace AC
 		/** If True, then the script will update the SpriteRender's sorting values when the game is not running */ 
 		public bool livePreview = false;
 		
-		protected Vector3 originalDepth = Vector3.zero;
+		protected float originalDepth;
 		protected enum DepthAxis { Y, Z };
 		protected DepthAxis depthAxis = DepthAxis.Y;
 
@@ -150,28 +150,33 @@ namespace AC
 		{
 			sharedDepth = depth;
 			float trueDepth = (float) depth * KickStarter.sceneSettings.sharedLayerSeparationDistance;
+			
+			switch (depthAxis)
+			{
+				case DepthAxis.Y:
+					if (Transform.parent)
+					{
+						Transform.localPosition = new Vector3 (Transform.localPosition.x, originalDepth + trueDepth, Transform.localPosition.z);
+					}
+					else
+					{
+						Transform.position = new Vector3 (Transform.position.x, originalDepth + trueDepth, Transform.position.z);
+					}
+					break;
 
-			if (depthAxis == DepthAxis.Y)
-			{
-				if (Transform.parent)
-				{
-					Transform.position = Transform.parent.position + originalDepth + (Vector3.down * trueDepth);
-				}
-				else
-				{
-					Transform.position = originalDepth + (Vector3.down * trueDepth);
-				}
-			}
-			else
-			{
-				if (Transform.parent)
-				{
-					Transform.position = Transform.parent.position + originalDepth + (Vector3.forward * trueDepth);
-				}
-				else
-				{
-					Transform.position = originalDepth + (Vector3.forward * trueDepth);
-				}
+				case DepthAxis.Z:
+					if (Transform.parent)
+					{
+						Transform.localPosition = new Vector3 (Transform.localPosition.x, Transform.localPosition.y, originalDepth + trueDepth);
+					}
+					else
+					{
+						Transform.position = new Vector3 (Transform.position.x, Transform.position.y, originalDepth + trueDepth);
+					}
+					break;
+
+				default:
+					break;
 			}
 		}
 		
@@ -383,13 +388,18 @@ namespace AC
 				depthAxis = DepthAxis.Z;
 			}
 
-			if (Transform.parent)
+			switch (depthAxis)
 			{
-				originalDepth = Transform.position - Transform.parent.position;
-			}
-			else
-			{
-				originalDepth = Transform.position;
+				case DepthAxis.Y:
+					originalDepth = Transform.parent ? Transform.localPosition.y : Transform.position.y;
+					break;
+
+				case DepthAxis.Z:
+					originalDepth = Transform.parent ? Transform.localPosition.z : Transform.position.z;
+					break;
+
+				default:
+					break;
 			}
 
 			depthSet = true;
@@ -563,9 +573,7 @@ namespace AC
 
 		#region GetSet		
 
-		/**
-		 * The order of the sprite, according to the GameObject's position in the SortingMap, provided that the mapType = SortingMapType.OrderInLayer
-		 */
+		/** The order of the sprite, according to the GameObject's position in the SortingMap, provided that the mapType = SortingMapType.OrderInLayer */
 		public int SortingOrder
 		{
 			get
@@ -575,9 +583,7 @@ namespace AC
 		}
 
 
-		/**
-		 * The layer of the sprite, according to the GameObject's position in the SortingMap, provided that the mapType = SortingMapType.SortingLayer
-		 */
+		/** The layer of the sprite, according to the GameObject's position in the SortingMap, provided that the mapType = SortingMapType.SortingLayer */
 		public string SortingLayer
 		{
 			get

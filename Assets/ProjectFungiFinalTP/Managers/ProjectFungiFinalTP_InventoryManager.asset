@@ -12,7 +12,227 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5a2543a119f842959d20e84db3140dd, type: 3}
   m_Name: ProjectFungiFinalTP_InventoryManager
   m_EditorClassIdentifier: 
-  items: []
+  items:
+  - label: Dalia
+    id: 0
+    altLabel: Dalia
+    carryOnStart: 0
+    carryOnStartNotDefault: 0
+    carryOnStartIDs: 00000000
+    vars: []
+    canCarryMultiple: 1
+    count: 1
+    canBeLowerCase: 0
+    maxCount: 3
+    itemStackingMode: 0
+    tex: {fileID: 2800000, guid: dfb91f4ceefc940588ac490dd93ca849, type: 3}
+    activeTex: {fileID: 2800000, guid: dfb91f4ceefc940588ac490dd93ca849, type: 3}
+    selectedTex: {fileID: 0}
+    linkedPrefab: {fileID: 9027195166885174582, guid: e2fd270c4f002486ab3dc7c279f1f543, type: 3}
+    cursorIcon:
+      texture: {fileID: 0}
+      isAnimated: 0
+      numFrames: 1
+      numRows: 1
+      numCols: 1
+      size: 0.04
+      animSpeed: 4
+      endAnimOnLastFrame: 0
+      skipFirstFrameWhenLooping: 0
+      clickOffset: {x: 0, y: 0}
+      frameSpeeds: []
+      alwaysAnimate: 0
+      dontCycle: 0
+      label: Icon 1
+      lineID: -1
+      id: 0
+    lineID: -1
+    useIconID: 0
+    binID: -1
+    overrideUseSyntax: 0
+    hotspotPrefix1:
+      label: Use
+      lineID: -1
+    hotspotPrefix2:
+      label: on
+      lineID: -1
+    useActionList: {fileID: 0}
+    lookActionList: {fileID: 0}
+    interactions: []
+    combineInteractions: []
+    combineActionList: []
+    combineID: 
+    unhandledActionList: {fileID: 0}
+    unhandledCombineActionList: {fileID: 0}
+    carryOnStartID: -1
+    useSeparateSlots: 0
+    selectSingle: 0
+    showInFilter: 1
+  - label: Bolsa de semillas
+    id: 1
+    altLabel: 
+    carryOnStart: 0
+    carryOnStartNotDefault: 0
+    carryOnStartIDs: 00000000
+    vars: []
+    canCarryMultiple: 0
+    count: 1
+    canBeLowerCase: 1
+    maxCount: 999
+    itemStackingMode: 0
+    tex: {fileID: 2800000, guid: 0a0fc069c4a5446b4a6cc79e4d7799aa, type: 3}
+    activeTex: {fileID: 0}
+    selectedTex: {fileID: 0}
+    linkedPrefab: {fileID: 0}
+    cursorIcon:
+      texture: {fileID: 2800000, guid: 0a0fc069c4a5446b4a6cc79e4d7799aa, type: 3}
+      isAnimated: 0
+      numFrames: 1
+      numRows: 1
+      numCols: 1
+      size: 0.04
+      animSpeed: 4
+      endAnimOnLastFrame: 0
+      skipFirstFrameWhenLooping: 0
+      clickOffset: {x: 0, y: 0}
+      frameSpeeds: []
+      alwaysAnimate: 0
+      dontCycle: 0
+      label: Icon 1
+      lineID: -1
+      id: 0
+    lineID: -1
+    useIconID: 0
+    binID: -1
+    overrideUseSyntax: 0
+    hotspotPrefix1:
+      label: Use
+      lineID: -1
+    hotspotPrefix2:
+      label: on
+      lineID: -1
+    useActionList: {fileID: 0}
+    lookActionList: {fileID: 0}
+    interactions: []
+    combineInteractions: []
+    combineActionList: []
+    combineID: 
+    unhandledActionList: {fileID: 0}
+    unhandledCombineActionList: {fileID: 0}
+    carryOnStartID: -1
+    useSeparateSlots: 0
+    selectSingle: 0
+    showInFilter: 1
+  - label: Recipiente de Flor Vacio
+    id: 2
+    altLabel: Recipiente de Flor
+    carryOnStart: 0
+    carryOnStartNotDefault: 0
+    carryOnStartIDs: 00000000
+    vars: []
+    canCarryMultiple: 0
+    count: 1
+    canBeLowerCase: 1
+    maxCount: 999
+    itemStackingMode: 0
+    tex: {fileID: 2800000, guid: 6b1cc2eb125e9462c93bbbc0bdc3fc33, type: 3}
+    activeTex: {fileID: 0}
+    selectedTex: {fileID: 0}
+    linkedPrefab: {fileID: 0}
+    cursorIcon:
+      texture: {fileID: 2800000, guid: 6b1cc2eb125e9462c93bbbc0bdc3fc33, type: 3}
+      isAnimated: 0
+      numFrames: 1
+      numRows: 1
+      numCols: 1
+      size: 0.04
+      animSpeed: 4
+      endAnimOnLastFrame: 0
+      skipFirstFrameWhenLooping: 0
+      clickOffset: {x: 0, y: 0}
+      frameSpeeds: []
+      alwaysAnimate: 0
+      dontCycle: 0
+      label: Icon 1
+      lineID: -1
+      id: 0
+    lineID: -1
+    useIconID: 0
+    binID: -1
+    overrideUseSyntax: 0
+    hotspotPrefix1:
+      label: Use
+      lineID: -1
+    hotspotPrefix2:
+      label: on
+      lineID: -1
+    useActionList: {fileID: 0}
+    lookActionList: {fileID: 0}
+    interactions: []
+    combineInteractions: []
+    combineActionList: []
+    combineID: 
+    unhandledActionList: {fileID: 0}
+    unhandledCombineActionList: {fileID: 0}
+    carryOnStartID: -1
+    useSeparateSlots: 0
+    selectSingle: 0
+    showInFilter: 1
+  - label: Recipiente de Flor Lleno
+    id: 3
+    altLabel: Recipiente de Flor
+    carryOnStart: 0
+    carryOnStartNotDefault: 0
+    carryOnStartIDs: 00000000
+    vars: []
+    canCarryMultiple: 0
+    count: 1
+    canBeLowerCase: 1
+    maxCount: 999
+    itemStackingMode: 0
+    tex: {fileID: 2800000, guid: b435bec2cd32a4939b702e169baf33b3, type: 3}
+    activeTex: {fileID: 0}
+    selectedTex: {fileID: 0}
+    linkedPrefab: {fileID: 0}
+    cursorIcon:
+      texture: {fileID: 2800000, guid: b435bec2cd32a4939b702e169baf33b3, type: 3}
+      isAnimated: 0
+      numFrames: 1
+      numRows: 1
+      numCols: 1
+      size: 0.04
+      animSpeed: 4
+      endAnimOnLastFrame: 0
+      skipFirstFrameWhenLooping: 0
+      clickOffset: {x: 0, y: 0}
+      frameSpeeds: []
+      alwaysAnimate: 0
+      dontCycle: 0
+      label: Icon 1
+      lineID: -1
+      id: 0
+    lineID: -1
+    useIconID: 0
+    binID: -1
+    overrideUseSyntax: 0
+    hotspotPrefix1:
+      label: Use
+      lineID: -1
+    hotspotPrefix2:
+      label: on
+      lineID: -1
+    useActionList: {fileID: 0}
+    lookActionList: {fileID: 0}
+    interactions: []
+    combineInteractions: []
+    combineActionList: []
+    combineID: 
+    unhandledActionList: {fileID: 0}
+    unhandledCombineActionList: {fileID: 0}
+    carryOnStartID: -1
+    useSeparateSlots: 0
+    selectSingle: 0
+    showInFilter: 1
   bins: []
   invVars: []
   unhandledCombine: {fileID: 0}
@@ -21,4 +241,228 @@ MonoBehaviour:
   unhandledGive: {fileID: 0}
   recipes: []
   documents: []
-  objectives: []
+  objectives:
+  - ID: 0
+    title: Encuentra a Cuyuca
+    titleLineID: -1
+    description: "Sigue las d\xE1lias y ve si encuentras a Cuyuca para que te ayude
+      en tu nueva aventura."
+    descriptionLineID: -1
+    perPlayer: 0
+    texture: {fileID: 0}
+    states:
+    - ID: 0
+      label: Started
+      labelLineID: -1
+      description: State 00
+      descriptionLineID: -1
+      stateType: 1
+    - ID: 1
+      label: Completed
+      labelLineID: -1
+      description: State 01
+      descriptionLineID: -1
+      stateType: 2
+    lockStateWhenComplete: 0
+    lockStateWhenFail: 0
+  - ID: 1
+    title: Revitaliza a Cuyuca/Busca agua pura
+    titleLineID: -1
+    description: Busca donde conseguir agua pura para revitalizar a Cuyuca.
+    descriptionLineID: -1
+    perPlayer: 0
+    texture: {fileID: 0}
+    states:
+    - ID: 0
+      label: Started
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 1
+    - ID: 1
+      label: Completed
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 2
+    lockStateWhenComplete: 1
+    lockStateWhenFail: 1
+  - ID: 2
+    title: Ayuda a Yacu/Desbloquea el rio en el bosque de las Ruinas
+    titleLineID: -1
+    description: Mueve la piedra que se encuentra bloqueando el rio de en las ruinas
+      para lograr abrir un canal para purificar el pantano.
+    descriptionLineID: -1
+    perPlayer: 0
+    texture: {fileID: 0}
+    states:
+    - ID: 0
+      label: Started
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 1
+    - ID: 1
+      label: Completed
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 2
+    lockStateWhenComplete: 1
+    lockStateWhenFail: 1
+  - ID: 3
+    title: "Ayuda a Yacu/Desbloquea el rio de La Bifurcaci\xF3n"
+    titleLineID: -1
+    description: "Mueve la piedra que se encuentra bloqueando el rio de La Bifurcaci\xF3n
+      para lograr abrir un canal para purificar el pantano."
+    descriptionLineID: -1
+    perPlayer: 0
+    texture: {fileID: 0}
+    states:
+    - ID: 0
+      label: Started
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 1
+    - ID: 1
+      label: Completed
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 2
+    lockStateWhenComplete: 1
+    lockStateWhenFail: 1
+  - ID: 4
+    title: Ayuda a Yacu/Vuelve con Yacu
+    titleLineID: -1
+    description: Revisa como se encuentra el lago del pantano.
+    descriptionLineID: -1
+    perPlayer: 0
+    texture: {fileID: 0}
+    states:
+    - ID: 0
+      label: Started
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 1
+    - ID: 1
+      label: Completed
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 2
+    lockStateWhenComplete: 1
+    lockStateWhenFail: 1
+  - ID: 5
+    title: Revitaliza a Cuyuca/Busca algo para recoger agua
+    titleLineID: -1
+    description: "Busca un recipiente natural para juntar agua para Cuyuca y as\xED
+      lograr que se sienta mejor."
+    descriptionLineID: -1
+    perPlayer: 0
+    texture: {fileID: 0}
+    states:
+    - ID: 0
+      label: Started
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 1
+    - ID: 1
+      label: Completed
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 2
+    lockStateWhenComplete: 1
+    lockStateWhenFail: 1
+  - ID: 6
+    title: Obtener recipiente/Busca la lombriz
+    titleLineID: -1
+    description: 
+    descriptionLineID: -1
+    perPlayer: 0
+    texture: {fileID: 0}
+    states:
+    - ID: 0
+      label: Started
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 1
+    - ID: 1
+      label: Completed
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 2
+    lockStateWhenComplete: 1
+    lockStateWhenFail: 1
+  - ID: 7
+    title: Obtener Recipiente/Busca la oruga
+    titleLineID: -1
+    description: 
+    descriptionLineID: -1
+    perPlayer: 0
+    texture: {fileID: 0}
+    states:
+    - ID: 0
+      label: Started
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 1
+    - ID: 1
+      label: Completed
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 2
+    lockStateWhenComplete: 1
+    lockStateWhenFail: 1
+  - ID: 8
+    title: Revitaliza a Cuyuca/Lleva el agua a Cuyuca
+    titleLineID: -1
+    description: "Obtenida el agua, llevasela a Cuyuca para ver si as\xED logra reponerse."
+    descriptionLineID: -1
+    perPlayer: 0
+    texture: {fileID: 0}
+    states:
+    - ID: 0
+      label: Started
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 1
+    - ID: 1
+      label: Completed
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 2
+    lockStateWhenComplete: 1
+    lockStateWhenFail: 1
+  - ID: 9
+    title: Un nuevo peligro/Hacia el valle juntos
+    titleLineID: -1
+    description: Sigue a Cuyuca hasta el camino del valle.
+    descriptionLineID: -1
+    perPlayer: 0
+    texture: {fileID: 0}
+    states:
+    - ID: 0
+      label: Started
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 1
+    - ID: 1
+      label: Completed
+      labelLineID: -1
+      description: 
+      descriptionLineID: -1
+      stateType: 2
+    lockStateWhenComplete: 1
+    lockStateWhenFail: 1

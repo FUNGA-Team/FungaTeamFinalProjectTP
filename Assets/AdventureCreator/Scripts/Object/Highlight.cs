@@ -11,10 +11,9 @@
  * 
  */
 
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Rendering;
 
 namespace AC
 {
@@ -85,7 +84,13 @@ namespace AC
 
 		protected void Awake ()
 		{
-			#if UNITY_2019_3_OR_NEWER
+			Renderer thisRenderer = GetComponent<Renderer> ();
+			if (thisRenderer && thisRenderer.material && thisRenderer.material.HasProperty ("_BaseColor") && !thisRenderer.material.HasProperty ("_Color"))
+			{
+				colorProperty = "_BaseColor";
+			}
+
+			/*#if UNITY_2019_3_OR_NEWER
 			if (GraphicsSettings.currentRenderPipeline)
 			{
 				string pipelineType = GraphicsSettings.currentRenderPipeline.GetType ().ToString ();
@@ -94,7 +99,7 @@ namespace AC
 					colorProperty = "_BaseColor";
 				}
 			}
-			#endif
+			#endif*/
 
 			if (affectChildren)
 			{
@@ -103,7 +108,7 @@ namespace AC
 				{
 					foreach (Material material in childRenderer.materials)
 					{
-						if (material.HasProperty (colorProperty))
+						if (material.HasProperty (ColorProperty))
 						{
 							originalColors.Add (material.color);
 						}
@@ -117,7 +122,7 @@ namespace AC
 				{
 					foreach (Material material in _renderer.materials)
 					{
-						if (material.HasProperty (colorProperty))
+						if (material.HasProperty (ColorProperty))
 						{
 							originalColors.Add (material.color);
 						}
@@ -444,12 +449,12 @@ namespace AC
 							break;
 						}
 
-						if (material.HasProperty (colorProperty))
+						if (material.HasProperty (ColorProperty))
 						{
 							alpha = material.color.a;
 							Color newColor = originalColors[i] * highlight;
 							newColor.a = alpha;
-							material.SetColor (colorProperty, newColor);
+							material.SetColor (ColorProperty, newColor);
 							i++;
 						}
 					}
@@ -459,12 +464,12 @@ namespace AC
 			{
 				foreach (Material material in _renderer.materials)
 				{
-					if (material.HasProperty (colorProperty))
+					if (material.HasProperty (ColorProperty))
 					{
 						alpha = material.color.a;
 						Color newColor = originalColors[i] * highlight;
 						newColor.a = alpha;
-						material.SetColor (colorProperty, newColor);
+						material.SetColor (ColorProperty, newColor);
 						i++;
 					}
 				}
@@ -497,6 +502,19 @@ namespace AC
 					keyframes[0].value = value;
 					highlightCurve.keys = keyframes;
 				}
+			}
+		}
+
+
+		private string ColorProperty
+		{
+			get
+			{
+				if (KickStarter.settingsManager && !string.IsNullOrEmpty (KickStarter.settingsManager.highlightMaterialPropertyOverride))
+				{ 
+					return KickStarter.settingsManager.highlightMaterialPropertyOverride;
+				}
+				return colorProperty;
 			}
 		}
 

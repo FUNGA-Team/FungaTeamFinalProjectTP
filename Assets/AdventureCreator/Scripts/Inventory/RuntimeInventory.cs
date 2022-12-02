@@ -27,7 +27,8 @@ namespace AC
 		#region Variables
 
 		protected InvCollection playerInvCollection = new InvCollection ();
-		protected InvCollection craftingInvCollection = new InvCollection ();
+
+		protected List<IngredientCollection> ingredientCollections = new List<IngredientCollection> ();
 
 		protected InvInstance selectedInstance = null;
 		protected InvInstance lastSelectedInstance = null;
@@ -85,16 +86,14 @@ namespace AC
 
 		#region PublicFunctions
 
-		/**
-		 * Transfers any relevant data from InventoryManager when the game begins or restarts.
-		 */
+		/** Transfers any relevant data from InventoryManager when the game begins or restarts. */
 		public void OnInitPersistentEngine ()
 		{
 			SetNull ();
 			hoverInstance = null;
 			showHoverLabel = true;
 			
-			craftingInvCollection = new InvCollection ();
+			ingredientCollections = new List<IngredientCollection> ();
 
 			AssignStartingItems ();
 		}
@@ -731,50 +730,92 @@ namespace AC
 		}
 
 
-		/** Resets any active recipe, and clears all MenuCrafting elements */
+		/** Resets all active recipes, and clears all MenuCrafting elements */
 		public void RemoveRecipes ()
 		{
-			playerInvCollection.TransferAll (craftingInvCollection);
+			foreach (IngredientCollection ingredientCollection in ingredientCollections)
+			{
+				playerInvCollection.TransferAll (ingredientCollection.InvCollection);
+			}
 		}
-		
+
+
+		/** 
+		 * <summary>Resets the inventory associated with a specific Crafting Ingredients element</summary>
+		 * <param name = "menuName">The name of the Menu</param>
+		 * <param name = "craftingIngredientsName">The name of the Crafting menu element of type Ingredients</param>
+		 */
+		public void RemoveRecipe (string menuName, string craftingIngredientsName)
+		{
+			foreach (IngredientCollection ingredientCollection in ingredientCollections)
+			{
+				if (ingredientCollection.Matches (menuName, craftingIngredientsName))
+				{
+					playerInvCollection.TransferAll (ingredientCollection.InvCollection);
+				}
+			}
+		}
 
 
 		/**
 		 * <summary>Works out which Recipe, if any, for which all ingredients have been correctly arranged.</summary>
+		 * <param name = "ingredientsInvCollection">The InvCollection to get ingredients from</param>
 		 * <returns>The Recipe, if any, for which all ingredients have been correctly arranged</returns>
 		 */
-		public Recipe CalculateRecipe ()
+		public Recipe CalculateRecipe (InvCollection ingredientsInvCollection)
 		{
 			if (KickStarter.inventoryManager == null)
 			{
 				return null;
 			}
-			
+
 			foreach (Recipe recipe in KickStarter.inventoryManager.recipes)
 			{
-				if (recipe.CanBeCrafted (craftingInvCollection))
+				if (recipe.CanBeCrafted (ingredientsInvCollection))
 				{
 					return recipe;
 				}
 			}
-			
+
 			return null;
 		}
 
 
 		/**
 		 * <summary>Crafts a new inventory item, and removes the relevent ingredients, according to a Recipe.</summary>
+		 * <param name = "ingredientsInvCollection">The InvCollection to get ingredients from</param>
 		 * <param name = "recipe">The Recipe to perform</param>
 		 * <param name = "selectAfter">If True, then the resulting inventory item will be selected once the crafting is complete</param>
 		 */
-		public void PerformCrafting (Recipe recipe, bool selectAfter)
+		public void PerformCrafting (InvCollection ingredientsInvCollection, Recipe recipe, bool selectAfter)
 		{
-			craftingInvCollection.DeleteRecipeIngredients (recipe);
+			ingredientsInvCollection.DeleteRecipeIngredients (recipe);
 			InvInstance addedInstance = playerInvCollection.Add (new InvInstance (recipe.resultID));
 			
 			if (selectAfter)
 			{
 				SelectItem (addedInstance);
+			}
+		}
+
+
+		/**
+		 * <summary>Crafts a new inventory item, and removes the relevent ingredients, according to a Recipe.</summary>
+		 * <param name = "ingredientsInvCollection">The InvCollection to get ingredients from</param>
+		 * <param name = "recipe">The Recipe to perform</param>
+		 * <param name = "toInvCollection">If assigned, the InvCollection to place the newly-created Recipe item into</param>
+		 */
+		public InvInstance PerformCrafting (InvCollection ingredientsInvCollection, Recipe recipe, InvCollection toInvCollection = null)
+		{
+			ingredientsInvCollection.DeleteRecipeIngredients (recipe);
+			if (toInvCollection != null)
+			{
+				InvInstance addedInstance = toInvCollection.Add (new InvInstance (recipe.resultID));
+				return addedInstance;
+			}
+			else
+			{
+				return new InvInstance (recipe.resultID);
 			}
 		}
 
@@ -795,6 +836,28 @@ namespace AC
 			}
 
 			return invInstances;
+		}
+
+
+		/**
+		 * <summary>Gets an InvCollection of ingredients associated with a given MenuCrafting element</summary>
+		 * <param name = "menuName">The title of the Menu that contains the MenuCrafting element</param>
+		 * <param name = "craftingElementName">The title of the "Ingredients" MenuCrafting element</param>
+		 * <returns>The InvCollection of ingredients associated with the MenuCrafting element</summary>
+		 */
+		public InvCollection GetIngredientsInvCollection (string menuName, string craftingElementName)
+		{
+			for (int i = 0; i < ingredientCollections.Count; i++)
+			{
+				if (ingredientCollections[i].Matches (menuName, craftingElementName))
+				{
+					return ingredientCollections[i].InvCollection;
+				}
+			}
+
+			IngredientCollection newIngredientCollection = new IngredientCollection (menuName, craftingElementName);
+			ingredientCollections.Add (newIngredientCollection);
+			return newIngredientCollection.InvCollection;
 		}
 
 
@@ -1325,14 +1388,22 @@ namespace AC
 		}
 
 
-		public InvCollection CraftingInvCollection
+		/** The InvCollections that holds the current set of items to be crafted */
+		public InvCollection[] CraftingInvCollections
 		{
 			get
 			{
-				return craftingInvCollection;
+				InvCollection[] _invCollections = new InvCollection[ingredientCollections.Count];
+				for (int i = 0; i < _invCollections.Length; i++)
+				{
+					_invCollections[i] = ingredientCollections[i].InvCollection;
+				}
+				return _invCollections;
 			}
 		}
 
+
+		/** The InvCollection that holds the current set of items in the Player#s inventory */
 		public InvCollection PlayerInvCollection
 		{
 			get
