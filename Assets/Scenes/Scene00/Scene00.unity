@@ -1096,7 +1096,7 @@ MonoBehaviour:
   videoPlayerConstantID: 0
   prepareOnly: 0
   pauseWithGame: 0
-  movieURL: 
+  movieURL: http://
   movieURLParameterID: -1
 --- !u!1 &1356415832
 GameObject:
@@ -1693,7 +1693,7 @@ MonoBehaviour:
   syncParamValues: 1
   backupData:
   - className: AC.ActionMovie
-    jsonData: '{"id":0,"isDisplayed":true,"showComment":false,"comment":"","willWait":true,"endAction":0,"skipAction":-1,"skipActionActual":{"instanceID":0},"linkedCutscene":{"instanceID":0},"linkedAsset":{"instanceID":0},"endings":[{"resultAction":0,"skipAction":1,"skipActionActual":{"instanceID":71928},"linkedCutscene":{"instanceID":0},"linkedAsset":{"instanceID":0}}],"isEnabled":true,"isAssetFile":false,"isBreakPoint":false,"nodeRect":{"serializedVersion":"2","x":14.0,"y":14.0,"width":300.0,"height":232.0},"overrideColor":{"r":1.0,"g":1.0,"b":1.0,"a":1.0},"showOutputSockets":true,"parentActionListInEditor":{"instanceID":7100639973535331656_0},"movieClipType":2,"movieMaterialMethod":0,"skipKey":"InteractionB","canSkip":true,"videoPlayer":{"instanceID":538308365_0},"videoPlayerParameterID":-1,"videoPlayerConstantID":0,"prepareOnly":false,"pauseWithGame":false,"movieURL":"","movieURLParameterID":-1}'
+    jsonData: '{"id":0,"isDisplayed":true,"showComment":false,"comment":"","willWait":true,"endAction":0,"skipAction":-1,"skipActionActual":{"instanceID":0},"linkedCutscene":{"instanceID":0},"linkedAsset":{"instanceID":0},"endings":[{"resultAction":0,"skipAction":1,"skipActionActual":{"instanceID":90884},"linkedCutscene":{"instanceID":0},"linkedAsset":{"instanceID":0}}],"isEnabled":true,"isAssetFile":false,"isBreakPoint":false,"nodeRect":{"serializedVersion":"2","x":14.0,"y":14.0,"width":300.0,"height":232.0},"overrideColor":{"r":1.0,"g":1.0,"b":1.0,"a":1.0},"showOutputSockets":true,"parentActionListInEditor":{"instanceID":7100639973535331656_0},"movieClipType":2,"movieMaterialMethod":0,"skipKey":"InteractionB","canSkip":true,"videoPlayer":{"instanceID":538308365_0},"videoPlayerParameterID":-1,"videoPlayerConstantID":0,"prepareOnly":false,"pauseWithGame":false,"movieURL":"http://","movieURLParameterID":-1}'
     endingReferencesBuffer: 00
     endingOverrideIndex: 00000000
   - className: AC.ActionScene
